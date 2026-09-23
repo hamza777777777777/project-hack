@@ -11,16 +11,16 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout.index'
-import { Route as LayoutVerificationRouteImport } from './routes/_layout.verification'
-import { Route as LayoutTasksRouteImport } from './routes/_layout.tasks'
-import { Route as LayoutStaffRouteImport } from './routes/_layout.staff'
-import { Route as LayoutSettingsRouteImport } from './routes/_layout.settings'
-import { Route as LayoutRooms360RouteImport } from './routes/_layout.rooms-360'
-import { Route as LayoutRecommendationsRouteImport } from './routes/_layout.recommendations'
-import { Route as LayoutPricingRouteImport } from './routes/_layout.pricing'
-import { Route as LayoutInsightsRouteImport } from './routes/_layout.insights'
-import { Route as LayoutComplaintsRouteImport } from './routes/_layout.complaints'
 import { Route as LayoutAuditRouteImport } from './routes/_layout.audit'
+import { Route as LayoutComplaintsRouteImport } from './routes/_layout.complaints'
+import { Route as LayoutInsightsRouteImport } from './routes/_layout.insights'
+import { Route as LayoutPricingRouteImport } from './routes/_layout.pricing'
+import { Route as LayoutRecommendationsRouteImport } from './routes/_layout.recommendations'
+import { Route as LayoutRooms360RouteImport } from './routes/_layout.rooms-360'
+import { Route as LayoutSettingsRouteImport } from './routes/_layout.settings'
+import { Route as LayoutStaffRouteImport } from './routes/_layout.staff'
+import { Route as LayoutTasksRouteImport } from './routes/_layout.tasks'
+import { Route as LayoutVerificationRouteImport } from './routes/_layout.verification'
 
 const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
@@ -31,44 +31,9 @@ const LayoutIndexRoute = LayoutIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutVerificationRoute = LayoutVerificationRouteImport.update({
-  id: '/verification',
-  path: '/verification',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutTasksRoute = LayoutTasksRouteImport.update({
-  id: '/tasks',
-  path: '/tasks',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutStaffRoute = LayoutStaffRouteImport.update({
-  id: '/staff',
-  path: '/staff',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutSettingsRoute = LayoutSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutRooms360Route = LayoutRooms360RouteImport.update({
-  id: '/rooms-360',
-  path: '/rooms-360',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutRecommendationsRoute = LayoutRecommendationsRouteImport.update({
-  id: '/recommendations',
-  path: '/recommendations',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutPricingRoute = LayoutPricingRouteImport.update({
-  id: '/pricing',
-  path: '/pricing',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutInsightsRoute = LayoutInsightsRouteImport.update({
-  id: '/insights',
-  path: '/insights',
+const LayoutAuditRoute = LayoutAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
   getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutComplaintsRoute = LayoutComplaintsRouteImport.update({
@@ -76,9 +41,44 @@ const LayoutComplaintsRoute = LayoutComplaintsRouteImport.update({
   path: '/complaints',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutAuditRoute = LayoutAuditRouteImport.update({
-  id: '/audit',
-  path: '/audit',
+const LayoutInsightsRoute = LayoutInsightsRouteImport.update({
+  id: '/insights',
+  path: '/insights',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutPricingRoute = LayoutPricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutRecommendationsRoute = LayoutRecommendationsRouteImport.update({
+  id: '/recommendations',
+  path: '/recommendations',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutRooms360Route = LayoutRooms360RouteImport.update({
+  id: '/rooms-360',
+  path: '/rooms-360',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutSettingsRoute = LayoutSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutStaffRoute = LayoutStaffRouteImport.update({
+  id: '/staff',
+  path: '/staff',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutTasksRoute = LayoutTasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutVerificationRoute = LayoutVerificationRouteImport.update({
+  id: '/verification',
+  path: '/verification',
   getParentRoute: () => LayoutRoute,
 } as any)
 
@@ -186,60 +186,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutIndexRouteImport
       parentRoute: typeof LayoutRoute
     }
-    '/_layout/verification': {
-      id: '/_layout/verification'
-      path: '/verification'
-      fullPath: '/verification'
-      preLoaderRoute: typeof LayoutVerificationRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/tasks': {
-      id: '/_layout/tasks'
-      path: '/tasks'
-      fullPath: '/tasks'
-      preLoaderRoute: typeof LayoutTasksRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/staff': {
-      id: '/_layout/staff'
-      path: '/staff'
-      fullPath: '/staff'
-      preLoaderRoute: typeof LayoutStaffRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/settings': {
-      id: '/_layout/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof LayoutSettingsRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/rooms-360': {
-      id: '/_layout/rooms-360'
-      path: '/rooms-360'
-      fullPath: '/rooms-360'
-      preLoaderRoute: typeof LayoutRooms360RouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/recommendations': {
-      id: '/_layout/recommendations'
-      path: '/recommendations'
-      fullPath: '/recommendations'
-      preLoaderRoute: typeof LayoutRecommendationsRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/pricing': {
-      id: '/_layout/pricing'
-      path: '/pricing'
-      fullPath: '/pricing'
-      preLoaderRoute: typeof LayoutPricingRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/insights': {
-      id: '/_layout/insights'
-      path: '/insights'
-      fullPath: '/insights'
-      preLoaderRoute: typeof LayoutInsightsRouteImport
+    '/_layout/audit': {
+      id: '/_layout/audit'
+      path: '/audit'
+      fullPath: '/audit'
+      preLoaderRoute: typeof LayoutAuditRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/complaints': {
@@ -249,11 +200,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutComplaintsRouteImport
       parentRoute: typeof LayoutRoute
     }
-    '/_layout/audit': {
-      id: '/_layout/audit'
-      path: '/audit'
-      fullPath: '/audit'
-      preLoaderRoute: typeof LayoutAuditRouteImport
+    '/_layout/insights': {
+      id: '/_layout/insights'
+      path: '/insights'
+      fullPath: '/insights'
+      preLoaderRoute: typeof LayoutInsightsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/pricing': {
+      id: '/_layout/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof LayoutPricingRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/recommendations': {
+      id: '/_layout/recommendations'
+      path: '/recommendations'
+      fullPath: '/recommendations'
+      preLoaderRoute: typeof LayoutRecommendationsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/rooms-360': {
+      id: '/_layout/rooms-360'
+      path: '/rooms-360'
+      fullPath: '/rooms-360'
+      preLoaderRoute: typeof LayoutRooms360RouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/settings': {
+      id: '/_layout/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof LayoutSettingsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/staff': {
+      id: '/_layout/staff'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof LayoutStaffRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/tasks': {
+      id: '/_layout/tasks'
+      path: '/tasks'
+      fullPath: '/tasks'
+      preLoaderRoute: typeof LayoutTasksRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/verification': {
+      id: '/_layout/verification'
+      path: '/verification'
+      fullPath: '/verification'
+      preLoaderRoute: typeof LayoutVerificationRouteImport
       parentRoute: typeof LayoutRoute
     }
   }

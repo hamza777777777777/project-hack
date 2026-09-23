@@ -1,203 +1,320 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { CheckSquare, Clock, AlertTriangle, BrainCircuit, LineChart } from 'lucide-react'
+import {
+  CheckSquare, Clock, AlertTriangle, BrainCircuit,
+  LineChart, Download, ArrowRight,
+} from 'lucide-react'
+import { useI18n } from '@/i18n'
+import { toast } from 'sonner'
+import { mockTasks } from '@/data/mock-tasks'
+import { mockStaff } from '@/data/mock-staff'
 
 export const Route = createFileRoute('/_layout/')({
   component: DashboardPage,
 })
 
 function DashboardPage() {
+  const { t } = useI18n()
+  const navigate = useNavigate()
+
+  // Derive live counts from mock data
+  const openTasks     = mockTasks.filter(t => t.status !== 'Closed' && t.status !== 'Verified').length
+  const highPriority  = mockTasks.filter(t => t.priority === 'high' || t.priority === 'critical').length
+  const availableStaff = mockStaff.filter(s => s.availability === 'available').length
+  const busyStaff      = mockStaff.filter(s => s.availability === 'busy').length
+  const onLeaveStaff   = mockStaff.filter(s => s.availability === 'on_leave').length
+
+  function handleDownload() {
+    toast.success('Report ready', {
+      description: `Dashboard summary: ${openTasks} open tasks, ${highPriority} high priority, ${availableStaff} staff available.`,
+    })
+  }
+
+  function statusStyle(key: string): React.CSSProperties {
+    const map: Record<string, React.CSSProperties> = {
+      'status.inProgress': { background: 'var(--status-open)',     color: 'var(--status-open-fg)',     borderColor: 'var(--status-open-border)' },
+      'status.assigned':   { background: 'var(--status-progress)', color: 'var(--status-progress-fg)', borderColor: 'var(--status-progress-border)' },
+      'status.completed':  { background: 'var(--status-success)',  color: 'var(--status-success-fg)',  borderColor: 'var(--status-success-border)' },
+    }
+    return map[key] ?? {}
+  }
+
   return (
-    <div className="p-6 space-y-6 bg-muted/20 min-h-screen">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Manager Dashboard</h1>
-        <div className="flex space-x-2">
-          <Button variant="outline">Download Report</Button>
+    <div className='px-8 py-8 space-y-8 min-h-screen'>
+
+      {/* ── Page header ───────────────────────────────── */}
+      <div className='flex items-start justify-between gap-4'>
+        <div>
+          <h1 className='text-[2rem] font-semibold tracking-tight leading-tight'>
+            {t('dashboard.title')}
+          </h1>
+          <p className='text-muted-foreground mt-1' style={{ fontSize: '0.9375rem' }}>
+            {t('dashboard.subtitle')}
+          </p>
         </div>
+        <Button
+          variant='outline' size='sm'
+          className='shrink-0 mt-1 gap-2'
+          onClick={handleDownload}
+          aria-label={t('action.download')}
+        >
+          <Download className='size-4' aria-hidden='true' />
+          {t('action.download')}
+        </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Open Tasks</CardTitle>
-            <CheckSquare className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">12</div>
-            <p className="text-xs text-muted-foreground">-2 from yesterday</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">High Priority</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-destructive" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">3</div>
-            <p className="text-xs text-muted-foreground">Requires immediate attention</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Time to Assign</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">1.2m</div>
-            <p className="text-xs text-muted-foreground">+0.2m from last week</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Time to Complete</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">34m</div>
-            <p className="text-xs text-muted-foreground">-5m from last week</p>
-          </CardContent>
-        </Card>
+      {/* ── KPI row ───────────────────────────────────── */}
+      <div className='grid gap-5 sm:grid-cols-2 lg:grid-cols-4'>
+        {[
+          {
+            label: t('dashboard.openTasks'),
+            value: String(openTasks),
+            sub: `${openTasks} active right now`,
+            icon: CheckSquare, iconClass: 'text-muted-foreground/60',
+            onClick: () => navigate({ to: '/tasks' }),
+          },
+          {
+            label: t('dashboard.highPriority'),
+            value: String(highPriority),
+            sub: t('dashboard.attentionRequired'),
+            icon: AlertTriangle, iconClass: 'text-destructive/70',
+            onClick: () => navigate({ to: '/tasks' }),
+          },
+          {
+            label: t('dashboard.avgAssign'),
+            value: '1.2m',
+            sub: t('dashboard.lastWeekUp'),
+            icon: Clock, iconClass: 'text-muted-foreground/60',
+            onClick: undefined,
+          },
+          {
+            label: t('dashboard.avgComplete'),
+            value: '34m',
+            sub: t('dashboard.lastWeekDown'),
+            icon: Clock, iconClass: 'text-muted-foreground/60',
+            onClick: undefined,
+          },
+        ].map(({ label, value, sub, icon: Icon, iconClass, onClick }) => (
+          <Card
+            key={label}
+            className={onClick ? 'cursor-pointer hover:border-[var(--violet-border)] transition-colors' : ''}
+            onClick={onClick}
+            role={onClick ? 'button' : undefined}
+            tabIndex={onClick ? 0 : undefined}
+            onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') onClick() } : undefined}
+            aria-label={onClick ? `${label} — click to view tasks` : undefined}
+          >
+            <CardHeader className='flex flex-row items-center justify-between pb-3'>
+              <CardTitle className='text-[0.8125rem] font-semibold tracking-widest uppercase text-muted-foreground'>
+                {label}
+              </CardTitle>
+              <Icon className={`size-4 shrink-0 ${iconClass}`} aria-hidden='true' />
+            </CardHeader>
+            <CardContent>
+              <div className='text-[2.25rem] font-semibold leading-none tracking-tight'>{value}</div>
+              <p className='mt-1.5 text-[0.875rem] text-muted-foreground'>{sub}</p>
+              {onClick && (
+                <p className='mt-2 flex items-center gap-1 text-[0.8125rem]' style={{ color: 'var(--violet-deep)' }}>
+                  View Tasks <ArrowRight className='size-3' aria-hidden='true' />
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4">
-          <CardHeader>
-            <CardTitle>Live Task Table</CardTitle>
-            <CardDescription>Real-time view of current operational tasks.</CardDescription>
+      {/* ── Main content grid ─────────────────────────── */}
+      <div className='grid gap-5 lg:grid-cols-7'>
+
+        {/* Live task table */}
+        <Card className='lg:col-span-4'>
+          <CardHeader className='flex flex-row items-center justify-between pb-3'>
+            <div>
+              <CardTitle className='text-[1.0625rem]'>{t('dashboard.liveTaskTable')}</CardTitle>
+              <CardDescription>{t('dashboard.liveTaskDesc')}</CardDescription>
+            </div>
+            <Button
+              variant='ghost' size='sm'
+              onClick={() => navigate({ to: '/tasks' })}
+              className='text-muted-foreground hover:text-foreground gap-1'
+              aria-label='View all tasks'
+            >
+              All tasks <ArrowRight className='size-3.5' aria-hidden='true' />
+            </Button>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div className="rounded-md border">
-                <table className="min-w-full text-sm">
-                  <thead>
-                    <tr className="border-b bg-muted/50">
-                      <th className="p-3 text-left font-medium">Task ID</th>
-                      <th className="p-3 text-left font-medium">Issue</th>
-                      <th className="p-3 text-left font-medium">Room</th>
-                      <th className="p-3 text-left font-medium">Assigned To</th>
-                      <th className="p-3 text-left font-medium">Status</th>
+            <div className='rounded-sm border overflow-x-auto'>
+              <table className='w-full' style={{ fontSize: '0.9375rem' }}>
+                <thead>
+                  <tr className='border-b bg-muted/40'>
+                    {[t('label.taskId'), t('label.issue'), t('label.room'), t('label.assignedTo'), t('label.status')].map(h => (
+                      <th key={h} className='px-4 py-2.5 text-left text-[0.75rem] font-semibold tracking-widest uppercase text-muted-foreground whitespace-nowrap'>
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {mockTasks.map(task => (
+                    <tr
+                      key={task.id}
+                      className='border-b last:border-0 hover:bg-[var(--violet-surface)] transition-colors cursor-pointer group'
+                      onClick={() => navigate({ to: '/tasks' })}
+                      role='button'
+                      tabIndex={0}
+                      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') navigate({ to: '/tasks' }) }}
+                      aria-label={`View task ${task.id}`}
+                    >
+                      <td className='px-4 py-3 font-medium'>{task.id}</td>
+                      <td className='px-4 py-3'>{task.title}</td>
+                      <td className='px-4 py-3 text-muted-foreground'>
+                        {task.complaintId?.replace('CMP-2023-00', '') ?? '—'}
+                      </td>
+                      <td className='px-4 py-3'>{task.assignedTo}</td>
+                      <td className='px-4 py-3'>
+                        <Badge variant='outline'
+                          style={statusStyle(
+                            task.status === 'In Progress' ? 'status.inProgress'
+                              : task.status === 'Assigned' ? 'status.assigned'
+                              : task.status === 'Completed' ? 'status.completed'
+                              : 'status.assigned'
+                          )}>
+                          {t(
+                            task.status === 'In Progress' ? 'status.inProgress'
+                              : task.status === 'Assigned' ? 'status.assigned'
+                              : task.status === 'Completed' ? 'status.completed'
+                              : 'status.assigned'
+                          )}
+                        </Badge>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="border-b">
-                      <td className="p-3">TSK-1021</td>
-                      <td className="p-3">AC Not Cooling</td>
-                      <td className="p-3">204</td>
-                      <td className="p-3">Rahul Sharma</td>
-                      <td className="p-3"><Badge variant="outline" className="bg-yellow-100 text-yellow-800">In Progress</Badge></td>
-                    </tr>
-                    <tr className="border-b">
-                      <td className="p-3">TSK-1022</td>
-                      <td className="p-3">Plumbing Leak</td>
-                      <td className="p-3">112</td>
-                      <td className="p-3">Arjun Patil</td>
-                      <td className="p-3"><Badge variant="outline" className="bg-blue-100 text-blue-800">Assigned</Badge></td>
-                    </tr>
-                    <tr>
-                      <td className="p-3">TSK-1023</td>
-                      <td className="p-3">Extra Towels</td>
-                      <td className="p-3">305</td>
-                      <td className="p-3">Priya Nair</td>
-                      <td className="p-3"><Badge variant="outline" className="bg-green-100 text-green-800">Completed</Badge></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </CardContent>
         </Card>
 
-        <div className="col-span-3 space-y-4">
+        {/* Right column */}
+        <div className='lg:col-span-3 space-y-5'>
+
+          {/* AI Assignment Insight */}
           <Card>
-            <CardHeader className="flex flex-row items-center space-y-0">
-              <div className="flex-1">
-                <CardTitle>AI Assignment Insight</CardTitle>
-                <CardDescription>Explainability view for recent assignment.</CardDescription>
+            <CardHeader className='flex flex-row items-center justify-between pb-3'>
+              <div>
+                <CardTitle className='text-[1.0625rem]'>{t('dashboard.aiInsight')}</CardTitle>
+                <CardDescription>{t('dashboard.aiInsightDesc')}</CardDescription>
               </div>
-              <BrainCircuit className="h-5 w-5 text-indigo-500" />
+              <BrainCircuit className='size-4 text-muted-foreground/60 shrink-0' aria-hidden='true' />
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="font-medium text-muted-foreground">Assigned to:</span>
-                  <span className="font-bold">Rahul Sharma</span>
+              <div className='space-y-3'>
+                <div className='flex justify-between items-center' style={{ fontSize: '0.9375rem' }}>
+                  <span className='text-muted-foreground'>{t('label.assignedTo')}</span>
+                  <span className='font-semibold'>Rahul Sharma</span>
                 </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="font-medium text-muted-foreground">Match Score:</span>
-                  <Badge className="bg-indigo-100 text-indigo-800 hover:bg-indigo-100">92/100</Badge>
+                <div className='flex justify-between items-center' style={{ fontSize: '0.9375rem' }}>
+                  <span className='text-muted-foreground'>{t('dashboard.matchScore')}</span>
+                  <Badge variant='outline' style={{ background: 'var(--status-success)', color: 'var(--status-success-fg)', borderColor: 'var(--status-success-border)' }}>
+                    92 / 100
+                  </Badge>
                 </div>
-                <div className="pt-2 border-t space-y-1">
-                  <div className="flex justify-between text-xs">
-                    <span>Skill Match</span>
-                    <span>35/35</span>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span>Availability</span>
-                    <span>20/20</span>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span>Workload</span>
-                    <span>18/25</span>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span>Priority</span>
-                    <span>15/15</span>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span>Recency</span>
-                    <span>4/5</span>
-                  </div>
+                <div className='pt-3 border-t space-y-2'>
+                  {[
+                    [t('dashboard.skillMatch'), '35/35'],
+                    [t('dashboard.availability'), '20/20'],
+                    [t('dashboard.workload'), '18/25'],
+                    ['Priority', '15/15'],
+                    [t('dashboard.recency'), '4/5'],
+                  ].map(([label, value]) => (
+                    <div key={label} className='flex justify-between' style={{ fontSize: '0.875rem' }}>
+                      <span className='text-muted-foreground'>{label}</span>
+                      <span className='font-medium'>{value}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
+              <Button
+                variant='ghost' size='sm'
+                className='mt-4 w-full text-muted-foreground hover:text-foreground gap-1'
+                onClick={() => navigate({ to: '/audit' })}
+                aria-label='View full audit trail'
+              >
+                View audit trail <ArrowRight className='size-3.5' aria-hidden='true' />
+              </Button>
             </CardContent>
           </Card>
 
+          {/* Pricing Intelligence */}
           <Card>
-            <CardHeader className="flex flex-row items-center space-y-0">
-              <div className="flex-1">
-                <CardTitle>Pricing Intelligence</CardTitle>
-                <CardDescription>Live competitor analysis</CardDescription>
+            <CardHeader className='flex flex-row items-center justify-between pb-3'>
+              <div>
+                <CardTitle className='text-[1.0625rem]'>{t('dashboard.pricingIntel')}</CardTitle>
+                <CardDescription>{t('dashboard.pricingDesc')}</CardDescription>
               </div>
-              <LineChart className="h-5 w-5 text-emerald-500" />
+              <LineChart className='size-4 text-muted-foreground/60 shrink-0' aria-hidden='true' />
             </CardHeader>
             <CardContent>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Munnar Valley Resort:</span>
-                  <span className="font-medium">₹4,200/night</span>
+              <div className='space-y-2' style={{ fontSize: '0.9375rem' }}>
+                <div className='flex justify-between'>
+                  <span className='text-muted-foreground'>Munnar Valley Resort</span>
+                  <span className='font-medium'>₹4,200/night</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Market Average:</span>
-                  <span className="font-medium">₹4,800/night</span>
+                <div className='flex justify-between'>
+                  <span className='text-muted-foreground'>Market Average</span>
+                  <span className='font-medium'>₹4,800/night</span>
                 </div>
-                <div className="mt-2 p-3 bg-emerald-50 text-emerald-900 rounded-md border border-emerald-100">
-                  <span className="font-medium block mb-1">AI Suggestion:</span>
-                  Consider raising Deluxe AC rates by ₹400 for the upcoming weekend. Competitor availability is low.
+                <div className='mt-3 p-3 rounded-sm border'
+                  style={{ background: 'var(--ai-surface)', borderColor: 'var(--ai-surface-border)', color: 'var(--ai-surface-fg)' }}>
+                  <span className='font-semibold block mb-1' style={{ fontSize: '0.875rem' }}>
+                    {t('dashboard.aiSuggestion')}
+                  </span>
+                  <span style={{ fontSize: '0.875rem', lineHeight: '1.5' }}>
+                    Consider raising Deluxe AC rates by ₹400 for the upcoming weekend.
+                    Competitor availability is low.
+                  </span>
                 </div>
               </div>
+              <Button
+                variant='ghost' size='sm'
+                className='mt-4 w-full text-muted-foreground hover:text-foreground gap-1'
+                onClick={() => navigate({ to: '/pricing' })}
+                aria-label='View pricing intelligence'
+              >
+                View pricing <ArrowRight className='size-3.5' aria-hidden='true' />
+              </Button>
             </CardContent>
           </Card>
 
+          {/* Staffing Snapshot */}
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle>Staffing Snapshot</CardTitle>
+            <CardHeader className='pb-3 flex flex-row items-center justify-between'>
+              <CardTitle className='text-[1.0625rem]'>{t('dashboard.staffSnapshot')}</CardTitle>
+              <Button
+                variant='ghost' size='sm'
+                className='text-muted-foreground hover:text-foreground gap-1 -mr-2'
+                onClick={() => navigate({ to: '/staff' })}
+                aria-label='View all staff'
+              >
+                View <ArrowRight className='size-3.5' aria-hidden='true' />
+              </Button>
             </CardHeader>
             <CardContent>
-              <div className="flex space-x-4 text-sm">
-                <div className="flex flex-col items-center">
-                  <div className="text-2xl font-bold text-green-600">8</div>
-                  <div className="text-muted-foreground">Available</div>
-                </div>
-                <div className="flex flex-col items-center">
-                  <div className="text-2xl font-bold text-orange-500">5</div>
-                  <div className="text-muted-foreground">Busy</div>
-                </div>
-                <div className="flex flex-col items-center">
-                  <div className="text-2xl font-bold text-slate-400">2</div>
-                  <div className="text-muted-foreground">On Leave</div>
-                </div>
+              <div className='grid grid-cols-3 divide-x divide-border'>
+                {[
+                  { label: t('dashboard.available'), value: String(availableStaff), color: 'var(--status-success-fg)' },
+                  { label: t('dashboard.busy'),      value: String(busyStaff),      color: 'var(--status-open-fg)' },
+                  { label: t('dashboard.onLeave'),   value: String(onLeaveStaff),   color: 'var(--muted-foreground)' },
+                ].map(({ label, value, color }) => (
+                  <div key={label} className='flex flex-col items-center py-1'>
+                    <div className='text-[1.875rem] font-semibold leading-none tracking-tight' style={{ color }}>
+                      {value}
+                    </div>
+                    <div className='mt-1.5 text-[0.8125rem] text-muted-foreground'>{label}</div>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
