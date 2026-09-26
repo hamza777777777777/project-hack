@@ -1,6 +1,6 @@
 /**
  * List of available font names (visit the url `/settings/appearance`).
- * This array is used to generate dynamic font classes (e.g., `font-cormorant`, `font-inter`).
+ * This array is used to generate dynamic font classes (e.g., `font-inter`, `font-manrope`).
  *
  * 📝 How to Add a New Font (Tailwind v4+):
  * 1. Add the font name here.
@@ -10,9 +10,10 @@
  * Example:
  * fonts.ts           → Add 'roboto' to this array.
  * index.html         → Add Google Fonts link for Roboto.
- * theme.css          → Add the new font in the CSS, e.g.:
+ * index.css          → Add the new font in the CSS, e.g.:
  *   @theme inline {
- *      --font-roboto: 'Roboto', sans-serif;
+ *      // ... other font families
+ *      --font-roboto: 'Roboto', var(--font-sans);
  *   }
  */
-export const fonts = ['cormorant', 'inter', 'manrope', 'system'] as const
+export const fonts = ['inter', 'manrope', 'system'] as const

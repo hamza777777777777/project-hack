@@ -12,8 +12,6 @@ import { handleServerError } from '@/lib/handle-server-error'
 import { DirectionProvider } from './context/direction-provider'
 import { FontProvider } from './context/font-provider'
 import { ThemeProvider } from './context/theme-provider'
-import { AccessibilityProvider } from './context/accessibility-provider'
-import { I18nProvider } from './i18n'
 // Generated Routes
 import { routeTree } from './routeTree.gen'
 // Styles
@@ -83,15 +81,11 @@ if (!rootElement.innerHTML) {
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
-          <AccessibilityProvider>
-            <FontProvider>
-              <I18nProvider>
-                <DirectionProvider>
-                  <RouterProvider router={router} />
-                </DirectionProvider>
-              </I18nProvider>
-            </FontProvider>
-          </AccessibilityProvider>
+          <FontProvider>
+            <DirectionProvider>
+              <RouterProvider router={router} />
+            </DirectionProvider>
+          </FontProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </StrictMode>

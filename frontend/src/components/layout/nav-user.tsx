@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Link } from '@tanstack/react-router'
 import {
   BadgeCheck,
   Bell,
@@ -7,7 +7,6 @@ import {
   LogOut,
   Sparkles,
 } from 'lucide-react'
-import { toast } from 'sonner'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
@@ -25,8 +24,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
-import { UserSheet, type UserSheetTab } from '@/components/user-sheet'
-import { UpgradeModal } from '@/components/upgrade-modal'
 
 type NavUserProps = {
   user: {
@@ -38,26 +35,6 @@ type NavUserProps = {
 
 export function NavUser({ user }: NavUserProps) {
   const { isMobile } = useSidebar()
-
-  // Sheet / modal state
-  const [sheetOpen,     setSheetOpen]     = useState(false)
-  const [sheetTab,      setSheetTab]      = useState<UserSheetTab>('profile')
-  const [upgradeOpen,   setUpgradeOpen]   = useState(false)
-
-  function openSheet(tab: UserSheetTab) {
-    setSheetTab(tab)
-    setSheetOpen(true)
-  }
-
-  function handleSignOut() {
-    toast.success('Signed out', {
-      description: 'You have been signed out of Smart Resort 360.',
-    })
-    // No real auth — feedback only in this demo
-  }
-
-  const menuItemStyle = { fontFamily: 'var(--font-cormorant)', fontSize: '0.9375rem' }
-
   return (
     <>
       <SidebarMenu>
@@ -66,137 +43,74 @@ export function NavUser({ user }: NavUserProps) {
             <DropdownMenuTrigger asChild>
               <SidebarMenuButton
                 size='lg'
-                className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground border-t border-sidebar-border pt-2 rounded-none'
-                aria-label='Open user menu'
+                className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
               >
-                <Avatar className='h-7 w-7 rounded-sm'>
+                <Avatar className='h-8 w-8 rounded-lg'>
                   <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback
-                    className='rounded-sm text-[0.6875rem] font-semibold tracking-wide'
-                    style={{ background: 'var(--violet-surface)', color: 'var(--violet-deep)' }}
-                  >
-                    SR
-                  </AvatarFallback>
+                  <AvatarFallback className='rounded-lg'>SN</AvatarFallback>
                 </Avatar>
-                <div className='grid flex-1 text-start leading-tight'>
-                  <span className='truncate font-semibold' style={{ fontFamily: 'var(--font-cormorant)', fontSize: '0.9375rem' }}>
-                    {user.name}
-                  </span>
-                  <span className='truncate text-muted-foreground' style={{ fontFamily: 'var(--font-cormorant)', fontSize: '0.8125rem' }}>
-                    {user.email}
-                  </span>
+                <div className='grid flex-1 text-start text-sm leading-tight'>
+                  <span className='truncate font-semibold'>{user.name}</span>
+                  <span className='truncate text-xs'>{user.email}</span>
                 </div>
-                <ChevronsUpDown className='ms-auto size-4 opacity-40' aria-hidden='true' />
+                <ChevronsUpDown className='ms-auto size-4' />
               </SidebarMenuButton>
             </DropdownMenuTrigger>
-
             <DropdownMenuContent
-              className='w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-md'
+              className='w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg'
               side={isMobile ? 'bottom' : 'right'}
               align='end'
               sideOffset={4}
             >
-              {/* User identity header */}
               <DropdownMenuLabel className='p-0 font-normal'>
-                <button
-                  type='button'
-                  onClick={() => openSheet('profile')}
-                  className='flex w-full items-center gap-2 px-2 py-2 text-start rounded-sm hover:bg-[var(--violet-surface)] transition-colors'
-                  aria-label='View profile'
-                >
-                  <Avatar className='h-7 w-7 rounded-sm'>
+                <div className='flex items-center gap-2 px-1 py-1.5 text-start text-sm'>
+                  <Avatar className='h-8 w-8 rounded-lg'>
                     <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback className='rounded-sm text-[0.6875rem] font-semibold'
-                      style={{ background: 'var(--violet-surface)', color: 'var(--violet-deep)' }}>
-                      SR
-                    </AvatarFallback>
+                    <AvatarFallback className='rounded-lg'>SN</AvatarFallback>
                   </Avatar>
-                  <div className='grid flex-1 text-start leading-tight'>
-                    <span className='truncate font-semibold' style={menuItemStyle}>{user.name}</span>
-                    <span className='truncate text-muted-foreground' style={{ fontFamily: 'var(--font-cormorant)', fontSize: '0.8125rem' }}>{user.email}</span>
+                  <div className='grid flex-1 text-start text-sm leading-tight'>
+                    <span className='truncate font-semibold'>{user.name}</span>
+                    <span className='truncate text-xs'>{user.email}</span>
                   </div>
-                </button>
+                </div>
               </DropdownMenuLabel>
-
               <DropdownMenuSeparator />
-
-              {/* Upgrade to Pro */}
               <DropdownMenuGroup>
-                <DropdownMenuItem
-                  style={menuItemStyle}
-                  className='cursor-pointer'
-                  onSelect={() => setUpgradeOpen(true)}
-                  aria-label='Upgrade to Pro'
-                >
-                  <Sparkles className='opacity-70' style={{ color: 'var(--violet-fg)' }} aria-hidden='true' />
-                  <span style={{ color: 'var(--violet-deep)', fontWeight: 500 }}>Upgrade to Pro</span>
+                <DropdownMenuItem>
+                  <Sparkles />
+                  Upgrade to Pro
                 </DropdownMenuItem>
               </DropdownMenuGroup>
-
               <DropdownMenuSeparator />
-
-              {/* Account / Billing / Notifications */}
               <DropdownMenuGroup>
-                <DropdownMenuItem
-                  style={menuItemStyle}
-                  className='cursor-pointer'
-                  onSelect={() => openSheet('account')}
-                  aria-label='Open account settings'
-                >
-                  <BadgeCheck className='opacity-60' aria-hidden='true' />
-                  Account
+                <DropdownMenuItem asChild>
+                  <Link to='/settings'>
+                    <BadgeCheck />
+                    Account
+                  </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  style={menuItemStyle}
-                  className='cursor-pointer'
-                  onSelect={() => openSheet('billing')}
-                  aria-label='Open billing'
-                >
-                  <CreditCard className='opacity-60' aria-hidden='true' />
-                  Billing
+                <DropdownMenuItem asChild>
+                  <Link to='/settings'>
+                    <CreditCard />
+                    Billing
+                  </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  style={menuItemStyle}
-                  className='cursor-pointer'
-                  onSelect={() => openSheet('notifications')}
-                  aria-label='Open notifications'
-                >
-                  <Bell className='opacity-60' aria-hidden='true' />
-                  Notifications
+                <DropdownMenuItem asChild>
+                  <Link to='/settings'>
+                    <Bell />
+                    Notifications
+                  </Link>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
-
               <DropdownMenuSeparator />
-
-              {/* Sign out */}
-              <DropdownMenuItem
-                variant='destructive'
-                style={menuItemStyle}
-                className='cursor-pointer'
-                onSelect={handleSignOut}
-                aria-label='Sign out'
-              >
-                <LogOut className='opacity-60' aria-hidden='true' />
+              <DropdownMenuItem variant='destructive'>
+                <LogOut />
                 Sign out
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </SidebarMenuItem>
       </SidebarMenu>
-
-      {/* Portals — rendered outside the sidebar tree */}
-      <UserSheet
-        open={sheetOpen}
-        onOpenChange={setSheetOpen}
-        initialTab={sheetTab}
-        onUpgrade={() => setUpgradeOpen(true)}
-        user={user}
-      />
-
-      <UpgradeModal
-        open={upgradeOpen}
-        onOpenChange={setUpgradeOpen}
-      />
     </>
   )
 }

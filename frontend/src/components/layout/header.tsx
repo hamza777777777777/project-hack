@@ -16,29 +16,33 @@ export function Header({ className, fixed, children, ...props }: HeaderProps) {
       setOffset(document.body.scrollTop || document.documentElement.scrollTop)
     }
 
+    // Add scroll listener to the body
     document.addEventListener('scroll', onScroll, { passive: true })
+
+    // Clean up the event listener on unmount
     return () => document.removeEventListener('scroll', onScroll)
   }, [])
 
   return (
     <header
       className={cn(
-        'z-50 h-14',
+        'z-50 h-16',
         fixed && 'header-fixed peer/header sticky top-0 w-[inherit]',
-        offset > 10 && fixed
-          ? 'border-b border-border/60 bg-background/95 backdrop-blur-md'
-          : 'border-b border-transparent',
-        'transition-[border-color,background-color] duration-200',
+        offset > 10 && fixed ? 'shadow' : 'shadow-none',
         className
       )}
       {...props}
     >
-      <div className='relative flex h-full items-center gap-3 px-5 sm:gap-4'>
-        <SidebarTrigger
-          variant='ghost'
-          className='max-md:scale-110 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors'
-        />
-        <Separator orientation='vertical' className='h-5 opacity-50' />
+      <div
+        className={cn(
+          'relative flex h-full items-center gap-3 p-4 sm:gap-4',
+          offset > 10 &&
+            fixed &&
+            'after:absolute after:inset-0 after:-z-10 after:bg-background/20 after:backdrop-blur-lg'
+        )}
+      >
+        <SidebarTrigger variant='outline' className='max-md:scale-125' />
+        <Separator orientation='vertical' className='h-6' />
         {children}
       </div>
     </header>
