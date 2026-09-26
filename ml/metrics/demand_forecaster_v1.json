@@ -5,7 +5,7 @@
     "dataset_source": "Public Hotel Booking Demand (Nuno Antonio et al.)",
     "dataset_path": "ml/dataset/hotel_bookings.csv",
     "target_definition": "daily_demand = COUNT of non-cancelled bookings (is_canceled==0) grouped by arrival_date across both hotel types combined.",
-    "hotel_type_decision": "SEPARATE",
+    "hotel_type_decision": "COMBINED (v1 benchmark)",
     "hotel_type_correlation": 0.2122,
     "training_date_range": "2015-08-04 to 2017-01-15",
     "validation_date_range": "2017-01-16 to 2017-05-09",
@@ -114,7 +114,7 @@
         }
     },
     "best_model": "RandomForest",
-    "selection_criterion": "lowest test MAE (chronological out-of-time evaluation)",
+    "selection_criterion": "RandomForest selected as the ML model for deployment: strongest ML performance and lowest RMSE among ML models (21.08 vs 21.22 for RollingMean7). Rolling Mean 7 remains the strongest simple benchmark by MAE (16.17 vs RF MAE 16.73). RandomForest beats Seasonal Naive on MAE. RandomForest does NOT beat Rolling Mean 7 on MAE.",
     "metrics": {
         "validation": {
             "mae": 20.985201228784042,
@@ -213,5 +213,8 @@
     "festival_caveat": "Dataset contains NO explicit festival/holiday labels. The model has NOT learned any festival demand effects. Event signals belong to a future event-aware planning layer.",
     "training_timestamp": "2026-09-26T16:10:18.880025",
     "python_version": "3.14.3",
-    "artifact_path": "ml/models/demand_forecaster_v1.joblib"
+    "artifact_path": "ml/models/demand_forecaster_v1.joblib",
+    "best_model_category": "best ML model",
+    "best_overall_by_mae": "rolling_mean_7",
+    "hotel_type_note": "v1 benchmark aggregates both City Hotel and Resort Hotel daily confirmed arrivals. Empirical correlation between the two hotel types is r=0.212 (weak), suggesting separate models would be more appropriate. Separate hotel-type modeling is recommended for v2. For a resort-focused India deployment, property-specific data should be used."
 }

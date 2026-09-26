@@ -1,12 +1,27 @@
 ﻿# DATA SCIENCE DEMAND FORECAST REPORT
 ## Smart Resort 360 -- Demand Forecaster v1.0
-**Dataset:** Public Hotel Booking Demand (Nuno Antonio, Ana de Almeida, Luis Nunes)
+**Dataset:** Public Hotel Booking Demand (Nuno Antonio, Ana de Almeida, Luis Nunes, 2019)
 **Training completed:** 2026-09-26
 **Model type:** PUBLIC BENCHMARK MODEL -- NOT Smart Resort actual data
 
+> [!IMPORTANT]
 > This model is trained entirely on a public European hotel dataset.
 > It does NOT represent Smart Resort 360 actual booking history.
 > Indian festival/event effects are NOT embedded in this model.
+
+---
+
+## Inconsistency Corrections Applied (Review Response)
+
+The following errors in the initial report were identified and corrected:
+
+| # | Inconsistency Found | Correction Applied |
+|---|---|---|
+| 1 | Report claimed RandomForest was the "best overall model" by MAE | Corrected: Rolling Mean 7 is the strongest benchmark by MAE (16.17 vs RF 16.73) |
+| 2 | Metrics JSON `selection_criterion` said "lowest test MAE" for RF | Corrected: RF selected as best ML model; Rolling Mean 7 noted as best by MAE |
+| 3 | Report said hotel-type decision was "SEPARATE" but model trained on combined data | Corrected: v1 uses COMBINED target; SEPARATE is a recommendation for v2 |
+| 4 | R2 explanation said "Negative R2 does NOT mean the model is worse than the mean" | Corrected: that statement was incorrect; see Section 8 below |
+| 5 | Plot 05 did not visually annotate which model leads on which metric | Corrected: plot regenerated with explicit labels and annotations |
 
 ---
 
@@ -17,7 +32,7 @@
 ```
 daily_demand = COUNT of rows where is_canceled == 0
                grouped by arrival_date
-               across BOTH hotel types combined
+               across BOTH hotel types combined (v1 benchmark)
 ```
 
 - Unit: number of confirmed room arrivals per calendar day
@@ -51,20 +66,30 @@ demand = (
 
 ---
 
-## 3. Hotel Type Decision
+## 3. Hotel Type Decision (Corrected)
 
 Empirical correlation between City Hotel and Resort Hotel daily confirmed arrivals:
 
 **r = 0.212 (weak)**
 
-Decision: **MODEL SEPARATELY** (r <= 0.5 threshold).
+**v1 decision: COMBINED (both hotel types aggregated into a single daily demand series)**
 
-The two hotel types show different demand patterns; combining them without hotel-type encoding would conflate distinct signals. Since this is a combined aggregate model (for benchmark purposes), both are summed but this limitation is documented. A production deployment would separate them.
+The v1 benchmark aggregates both hotel types. This was done to establish a single-series
+baseline quickly. Separate hotel-type modeling is recommended for v2 because City and
+Resort demand show different patterns (r = 0.212, different cancellation rates, different ADR).
+
+> [!NOTE]
+> The initial report claimed the decision was "SEPARATE," which was inconsistent with
+> what was actually trained. The v1 model artifact trains on combined demand.
+> This inconsistency has been corrected here and in the metrics JSON.
 
 | Hotel | n | Cancel Rate | Mean ADR |
 |---|---|---|---|
 | City Hotel | 79,330 | 41.7% | 105.3 |
 | Resort Hotel | 40,060 | 27.8% | 95.0 |
+
+Because Smart Resort 360 is resort-oriented, a future India-specific deployment should use
+property-specific resort data and should NOT use the City Hotel demand pattern as a proxy.
 
 ---
 
@@ -96,7 +121,8 @@ All 19 features are verified available BEFORE the forecast date for 7-day-ahead 
 | `lag_1` | **EXCLUDED** | Would require t-1..t-6 future values for h=7 |
 
 **Leakage prevention rule:**
-All rolling features computed as `shift(7).rolling(window)` — ensuring no demand value from the current or future week contaminates the feature.
+All rolling features computed as `shift(7).rolling(window)` -- ensuring no demand
+value from the current or future week contaminates the feature.
 
 ---
 
@@ -116,98 +142,135 @@ All rolling features computed as `shift(7).rolling(window)` — ensuring no dema
 
 | Baseline | Test MAE | Test RMSE | Test MAPE | Test R2 |
 |---|---|---|---|---|
-| Seasonal Naive (lag-7) | 21.57 rooms | 26.90 rooms | 20.4% | -0.696 |
-| Rolling Mean 7 | 16.17 rooms | 21.22 rooms | 15.8% | -0.055 |
+| **Rolling Mean 7** | **16.17** | 21.22 | **15.8%** | -0.055 |
+| Seasonal Naive (lag-7) | 21.57 | 26.90 | 20.4% | -0.696 |
 
-**Interpretation:**
-- MAE of 21.57 for Seasonal Naive means the prior week's same-day demand is off by ~21.6 rooms on average
-- Negative R2 on the test set indicates all models (including baselines) struggle with the high day-to-day noise in the short test period (114 days, Jun-Aug = European summer with irregular spikes)
+**Rolling Mean 7 is the strongest overall benchmark by MAE (16.17 rooms/day).**
+
+This is a simple, interpretable baseline: predict next week's demand as the 7-day
+rolling average of the past week's confirmed arrivals. It is difficult for ML models
+to beat this baseline substantially on short time-series (759 daily points).
 
 ---
 
 ## 7. ML Model Results
 
-| Model | Val MAE | Val RMSE | Test MAE | Test RMSE | Test MAPE | Test R2 | Train Time |
-|---|---|---|---|---|---|---|---|
-| RandomForest | 20.99 | 27.66 | **16.73** | **21.08** | **16.0%** | -0.041 | 0.5s |
-| GradientBoosting | -- | -- | 17.16 | 22.13 | -- | -0.148 | -- |
-| HistGradientBoosting | 21.06 | 28.22 | 18.78 | 23.90 | 17.6% | -0.339 | 0.7s |
+| Model | Val MAE | Val RMSE | Test MAE | Test RMSE | Test MAPE | Test R2 |
+|---|---|---|---|---|---|---|
+| **RandomForest** | **20.99** | **27.66** | **16.73** | **21.08** | **16.0%** | -0.041 |
+| GradientBoosting | -- | -- | 17.16 | 22.13 | 16.1% | -0.148 |
+| HistGradientBoosting | 21.06 | 28.22 | 18.78 | 23.90 | 17.6% | -0.339 |
+
+**RandomForest is the best-performing ML model on test MAE and test RMSE.**
 
 ---
 
-## 8. Out-of-Time Test Results (Best Model)
+## 8. Out-of-Time Test Results -- Correct Comparison (Corrected)
 
-**Selected: RandomForest**
-- Test MAE: **16.73 rooms/day** (mean absolute error)
-- Test RMSE: **21.08 rooms/day** (penalizes large errors more)
-- Test MAPE: **16.0%** (percentage off actual demand)
-- Test R2: **-0.041**
+Full ranking by test MAE (all models and baselines combined):
 
-**What these metrics mean for hotel demand forecasting:**
-- MAE 16.73: On average, the 7-day-ahead forecast is off by ~17 rooms vs the 94.8 mean. That is ~17.6% of mean demand -- within acceptable range for a benchmark model.
-- RMSE 21.08: Large spikes (unusual days) are penalized; the residual distribution shows the model under-predicts high-spike days.
-- MAPE 16.0%: Standard commercial demand forecasting targets <10-15% MAPE. This model reaches 16% on a European benchmark with only 26 months of training data.
-- R2 -0.041: Negative R2 does NOT mean the model is worse than predicting the mean; it means the test period (May-Aug 2017 summer) has higher variance than training. The model still outperforms naive baseline by MAE.
+| Rank | Model / Baseline | Category | Test MAE | Test RMSE | Test MAPE |
+|---|---|---|---|---|---|
+| 1 | **Rolling Mean 7** | Simple baseline | **16.17** | 21.22 | 15.8% |
+| 2 | **RandomForest** | ML model | **16.73** | **21.08** | 16.0% |
+| 3 | GradientBoosting | ML model | 17.16 | 22.13 | 16.1% |
+| 4 | HistGradientBoosting | ML model | 18.78 | 23.90 | 17.6% |
+| 5 | Seasonal Naive | Simple baseline | 21.57 | 26.90 | 20.4% |
 
-**MAE improvement vs Seasonal Naive: +22.5%**
+**Correct wording:**
+- Rolling Mean 7 is the strongest simple benchmark by MAE.
+- RandomForest is the strongest ML model (lowest test MAE and lowest test RMSE among ML models).
+- RandomForest beats Seasonal Naive on MAE (16.73 vs 21.57, +22.5% improvement).
+- RandomForest does NOT beat Rolling Mean 7 on MAE (16.73 vs 16.17).
+- RandomForest beats Rolling Mean 7 on RMSE (21.08 vs 21.22), a marginal difference.
 
----
-
-## 9. Model Selection Rationale
-
-**RandomForest selected.**
-
-Criteria applied:
-1. Lowest out-of-time test MAE (16.73 vs 17.16 for GradientBoosting, 18.78 for HGB)
-2. Best RMSE on test (21.08 -- tied with RollingMean7 but beats all other ML models)
-3. Fastest training (0.5s -- hackathon-scale CPU environment)
-4. Native feature importance available without additional permutation computation
-
-HistGradientBoosting performed best on validation MAE in some configurations but generalized less well to the summer test period, suggesting it overfit the training trend.
+**Deployment rationale (corrected):**
+RandomForest was selected as the ML model for deployment because it provides the strongest
+ML performance and slightly lower RMSE than the Rolling Mean baseline (21.08 vs 21.22),
+while Rolling Mean 7 remains the strongest simple benchmark by MAE. The ML model provides
+richer feature attribution and is extensible with additional features (event flags, ADR, etc.)
+that a rolling mean cannot incorporate. This justifies choosing RandomForest for a
+deployable ML pipeline even though it does not beat Rolling Mean 7 on MAE alone.
 
 ---
 
-## 10. Feature Importance
+## 8a. R2 Explanation (Corrected)
+
+> [!WARNING]
+> The initial report contained an incorrect statement about negative R2.
+> That statement has been removed and replaced with the following accurate explanation.
+
+**What negative R2 actually means:**
+
+Negative R2 means the model's squared-error performance on this test set is worse than
+simply predicting the test-set mean for every observation. Specifically:
+
+```
+R2 = 1 - (SS_residual / SS_total)
+```
+
+When SS_residual > SS_total, R2 is negative. This means the model's errors are larger
+(in squared terms) than the errors from always predicting the test set mean.
+
+**However, MAE and RMSE are also evaluated because they provide direct room-count
+error interpretation and are not as sensitive to a single metric reference level.**
+
+For this test set (May-Aug 2017, European summer peak with high day-to-day volatility):
+- The test mean demand is ~105 rooms/day with high variance
+- All models including baselines show negative R2 on this test window
+- This reflects the difficulty of the test period rather than a fundamental model failure
+- MAE and MAPE are the primary practical metrics for hotel demand forecasting
+
+Note: The claim "within acceptable range" has been removed. No external benchmark source
+was cited to support that claim. The model should be evaluated against baselines, not
+against an unstated acceptance threshold.
+
+---
+
+## 9. Feature Importance
 
 *Features are associated with model predictions. No causal claims are made.*
 
 | Rank | Feature | Importance | Interpretation |
 |---|---|---|---|
-| 1 | `rolling_mean_14` | 0.242 | 14-day trailing demand average is most predictive of next week |
-| 2 | `lag_7` | 0.146 | Same day last week -- strong weekly seasonal rhythm |
+| 1 | `rolling_mean_14` | 0.242 | 14-day trailing demand average is most associated with next-week predictions |
+| 2 | `lag_7` | 0.146 | Same day last week -- strong weekly pattern association |
 | 3 | `lag_14` | 0.087 | Two weeks ago same day |
-| 4 | `rolling_std_28` | 0.086 | Demand volatility over 28 days (uncertainty signal) |
-| 5 | `rolling_std_14` | 0.077 | Recent volatility |
+| 4 | `rolling_std_28` | 0.086 | 28-day demand variability signal |
+| 5 | `rolling_std_14` | 0.077 | 14-day demand variability signal |
 | 6 | `lag_28` | 0.053 | Monthly same-day lag |
-| 7 | `rolling_std_7` | 0.046 | Short-term volatility |
-| 8 | `recent_trend` | 0.044 | Whether demand is trending up or down recently |
+| 7 | `rolling_std_7` | 0.046 | Short-term variability |
+| 8 | `recent_trend` | 0.044 | Difference between rolling_mean_7 and rolling_mean_28 |
 | 9 | `rolling_mean_7` | 0.044 | Short-term rolling average |
-| 10 | `week_of_year` | 0.039 | Weekly seasonality index |
-| -- | `month` | 0.012 | Monthly seasonality (blended, not event-specific) |
-| -- | `seasonal_period` | 0.008 | 4-tier label (lowest -- subsumed by lag/rolling features) |
+| 10 | `week_of_year` | 0.039 | Weekly position in year |
+| -- | `month` | 0.012 | Monthly position |
+| -- | `seasonal_period` | 0.008 | 4-tier label (lowest, subsumed by lag/rolling) |
 
-**Key insight:** The model is predominantly driven by recent demand history (lags and rolling averages). Calendar features (month, seasonal_period) have lower relative importance because the lag/rolling features already encode most of the seasonal information through the actual demand trajectory.
-
----
-
-## 11. Limitations
-
-| Limitation | Impact | Mitigation |
-|---|---|---|
-| 26 months of training data | Limited exposure to rare events | Accept as benchmark; retrain on more data |
-| European hotel data applied to India context | Seasonal direction inverted | Must retrain on India-specific data |
-| No festival/holiday labels | Cannot learn event effects | Future event-adjustment layer |
-| Combined hotel types (different r=0.21) | Blends two distinct demand patterns | Separate models in production |
-| Only 114 test days (May-Aug summer) | Test period has high natural variance | Expected; not a model defect |
-| Negative R2 on test | Summer spikes are harder to predict | Use MAE/MAPE as primary metrics |
-| Day-to-day noise dominates | Spikes on specific days unpredictable | Weekly aggregation may be more actionable |
-| No competitor rate or ADR feature | Pricing effects not captured | Add as external feature in v2 |
+**Key insight:** The model is predominantly associated with recent demand history (lags and
+rolling averages). Calendar features (month, seasonal_period) have lower relative importance
+because the lag/rolling features already capture much of the seasonal information through
+the actual demand trajectory. Features being important in a decision tree model means they
+were useful for splitting nodes -- it does not mean they cause demand changes.
 
 ---
 
-## 12. Future Festival / Event Integration Design
+## 10. Limitations
 
-The approved **Hybrid Architecture (Option C)** applies:
+| Limitation | Impact |
+|---|---|
+| 26 months of training data | Limited exposure to rare events and structural shifts |
+| European hotel data | Seasonal direction inverted vs Indian coastal resort |
+| No festival/holiday labels | Cannot learn event-specific demand patterns |
+| Combined hotel types (r=0.21) | Blends two distinct demand patterns |
+| Only 114 test days (May-Aug summer) | High natural variance in test period; negative R2 expected |
+| No competitor rate or ADR feature | Pricing effects not captured in v1 |
+| Day-to-day noise | Individual daily spikes are difficult to predict |
+
+---
+
+## 11. Future Festival / Event Integration Design
+
+The approved **Hybrid Architecture (Option C)** applies without change:
 
 ```
 Stage 1 [ML Baseline -- this model]:
@@ -220,20 +283,24 @@ Stage 2 [Event Featurizer -- External Calendar]:
 
 Stage 3 [Hybrid Fusion]:
   If event within 14-day window:
-    Surface as PLANNING SIGNAL with the baseline forecast
+    Surface PLANNING SIGNAL alongside baseline forecast
   No numerical festival multiplier applied.
   Planning alert surfaced to hotel manager.
-
-Language enforced:
-  OK  -- "Demand is forecast to be elevated during this festival period"
-  NO  -- "Festival causes +30% demand increase"
 ```
 
-The current model is NOT retrained with festival features because the public European dataset contains NO Indian festival labels. Festival signals are exclusively a planning-layer concern.
+**Language rules enforced (unchanged):**
+- OK: "Demand is forecast to be elevated during this festival period"
+- OK: "The model associates this seasonal period with ~X rooms/day"
+- NOT OK: "Festival causes a +30% booking increase"
+- NOT OK: "Festival demand lift: +30%"
+
+The current model was trained on European hotel data and has NOT learned Diwali, Holi,
+Eid, or any Indian festival effects. Event signals remain exclusively a future planning
+layer concern until India-specific historical data with event labels is available.
 
 ---
 
-## 13. India-Specific Deployment Limitations
+## 12. India-Specific Deployment Limitations
 
 This model MUST NOT be deployed as-is for an Indian coastal resort.
 
@@ -259,7 +326,7 @@ Current (Public Benchmark Model)
 
 ---
 
-## 14. Saved Artifact Paths
+## 13. Saved Artifact Paths
 
 | Artifact | Path |
 |---|---|
@@ -270,22 +337,24 @@ Current (Public Benchmark Model)
 | Plot: Actual vs Predicted | `ml/reports/02_actual_vs_predicted_test.png` |
 | Plot: Residual analysis | `ml/reports/03_residual_analysis.png` |
 | Plot: Feature importance | `ml/reports/04_feature_importance.png` |
-| Plot: Model comparison | `ml/reports/05_model_comparison.png` |
+| Plot: Model comparison (corrected) | `ml/reports/05_model_comparison.png` |
 | Plot: DOW-Month heatmap | `ml/reports/06_demand_heatmap_dow_month.png` |
 | Phase 1 design audit | `ml/FUTURE_EVENTS_FORECAST_DESIGN.md` |
 
+**Note:** The model artifact `demand_forecaster_v1.joblib` was NOT modified during
+this correction pass. Only the report text, metrics JSON metadata fields, and
+the model comparison plot were updated.
+
 ---
 
-## 15. Reload / Inference Verification
+## 14. Reload and Inference Verification
 
 ```python
 import joblib, numpy as np
 loaded = joblib.load("ml/models/demand_forecaster_v1.joblib")
-model  = loaded["model"]
+model  = loaded["model"]       # RandomForest
 feats  = loaded["feature_cols"]  # 19 features
-
-# Build a feature row for any future date
-# (requires lag/rolling from known demand history)
+# Predict on a feature row built from historical lag/rolling data
 pred = np.clip(model.predict(X_row), 0, None)
 ```
 
@@ -301,9 +370,28 @@ Reload test on last 7 test dates (2017-08-25 to 2017-08-31):
 | 2017-08-30 | 62 | 95.7 | -33.7 |
 | 2017-08-31 | 89 | 114.5 | -25.5 |
 
-**Reload verification: PASS**
+**Reload verification: PASS | Feature count: 19**
 
-*The last week of test data is end-of-August 2017, where the dataset ends abruptly. The model has limited lag data context for those final days, causing slightly higher errors. This is expected at dataset boundaries.*
+The last 7 days are the final days of the dataset (Aug 25-31, 2017). Larger errors at
+the dataset boundary are expected because the model has fewer lag observations available
+and the end-of-dataset effect means the final days are somewhat anomalous.
+
+---
+
+## 15. Phase 3 Integration Recommendation
+
+The model is ready for Phase 3 (FastAPI integration) subject to the following conditions:
+
+1. **Use as a 7-day-ahead point forecast only.** Do not claim 14-day accuracy without
+   a separate evaluation.
+2. **Label outputs clearly:** "Public benchmark forecast -- European hotel patterns.
+   Not trained on Smart Resort actual data."
+3. **Do not display festival uplift numbers.** Event signals must be surfaced as
+   planning alerts, not as quantified multipliers.
+4. **Hotel-type note:** v1 combines both hotel types; the integration UI should
+   note this limitation.
+5. **Extend to v2 with:** separate hotel-type models, India-specific data,
+   and event calendar integration.
 
 ---
 
@@ -312,11 +400,12 @@ Reload test on last 7 test dates (2017-08-25 to 2017-08-31):
 - [x] Random seed: `RANDOM_SEED = 42` set globally
 - [x] Dataset version: `ml/dataset/hotel_bookings.csv` (fixed file)
 - [x] Feature list: 19 features (documented above)
-- [x] Target definition: non-cancelled arrivals per day
+- [x] Target definition: non-cancelled arrivals per day (both hotels combined)
 - [x] Split dates: 2017-01-15 (train end), 2017-05-09 (val end)
 - [x] Model parameters: n_estimators=200, max_depth=12, min_samples_leaf=3
 - [x] Training timestamp recorded in metrics JSON
 - [x] Python 3.14.3, pandas 3.0.6, sklearn 1.9.1
+- [x] Model artifact unchanged during correction pass
 
 ---
 
