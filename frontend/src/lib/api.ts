@@ -227,6 +227,30 @@ export interface AuditLogResponse {
   created_at: string;
 }
 
+export interface EventSignal {
+  name: string;
+  category: string;
+  importance: string;
+}
+
+export interface DailyDemandForecast {
+  date: string;
+  predicted_demand: number;
+  event: EventSignal | null;
+  planning_signal: string | null;
+}
+
+export interface DemandForecastResponse {
+  model_name: string;
+  model_version: string;
+  horizon_days: number;
+  forecast: DailyDemandForecast[];
+  source: string;
+  disclaimer: string;
+  metrics: any;
+  explanation: string[];
+}
+
 // ============================================================================
 // API Methods
 // ============================================================================
@@ -331,7 +355,10 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(payload),
     });
-  }
+  },
+
+  getDemandForecast: (): Promise<DemandForecastResponse> =>
+    fetchAPI<DemandForecastResponse>('/api/ml/demand-forecast'),
 };
 
 export interface SystemicIssue {

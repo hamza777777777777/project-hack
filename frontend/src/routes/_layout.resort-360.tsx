@@ -9,7 +9,7 @@ import { Separator } from '@/components/ui/separator'
 import {
   AlertTriangle, BrainCircuit, Activity, Users, BedDouble,
   RefreshCw, Info, CheckCircle2, Clock, UserCircle2,
-  LineChart, ArrowRight, Sparkles
+  LineChart, ArrowRight, Sparkles, TrendingUp, CalendarDays
 } from 'lucide-react'
 import {
   api,
@@ -19,6 +19,7 @@ import {
   type TaskResponse,
   type RecommendationResponse,
   type SystemicIssueResponse,
+  type DemandForecastResponse,
 } from '@/lib/api'
 
 export const Route = createFileRoute('/_layout/resort-360')({
@@ -83,6 +84,7 @@ function Resort360Page() {
   const [tasks,   setTasks]   = useState<TaskResponse[]>([])
   const [nextAction, setNextAction] = useState<RecommendationResponse | null>(null)
   const [systemicIssues, setSystemicIssues] = useState<SystemicIssueResponse | null>(null)
+  const [forecast, setForecast] = useState<DemandForecastResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error,   setError]   = useState<string | null>(null)
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date())
@@ -91,7 +93,7 @@ function Resort360Page() {
     try {
       setLoading(true)
       setError(null)
-      const [statsData, staffData, roomsData, tasksData, nextActionData, systemicIssuesData] = await Promise.all([
+      const [statsData, staffData, roomsData, tasksData, nextActionData, systemicIssuesData, forecastData] = await Promise.all([
         api.getStats(),
         api.getStaff(),
         api.getRooms(),
@@ -100,6 +102,10 @@ function Resort360Page() {
         api.getSystemicIssues().catch(e => {
           console.error("Systemic issues load error:", e);
           return { issues: [] };
+        }),
+        api.getDemandForecast().catch(e => {
+          console.error("Demand forecast load error:", e);
+          return { _error: e.message || "Demand forecast unavailable" } as any;
         })
       ])
       setStats(statsData)
@@ -108,6 +114,7 @@ function Resort360Page() {
       setTasks(tasksData)
       setNextAction(nextActionData)
       setSystemicIssues(systemicIssuesData)
+      setForecast(forecastData)
       setLastRefresh(new Date())
     } catch (err: any) {
       setError(err.message || 'Failed to load resort data')
@@ -365,6 +372,90 @@ function Resort360Page() {
                   </div>
                 ))}
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Demand Forecast */}
+          <Card>
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-indigo-600" />
+                    7-Day Demand Forecast
+                  </CardTitle>
+                  <CardDescription>Predicted booking demand (rooms / day)</CardDescription>
+                </div>
+                <div className="flex items-center text-xs gap-1 border rounded px-2 py-1 bg-amber-50 text-amber-700 border-amber-200 font-medium">
+                  <Info className="h-3 w-3" />
+                  Model Demo
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {(!forecast || (forecast as any)._error) ? (
+                <div className="text-sm text-red-600 bg-red-50 p-4 rounded-md border border-red-200 flex flex-col items-center justify-center text-center">
+                  <AlertTriangle className="h-6 w-6 mb-2 text-red-500" />
+                  <p className="font-semibold">Demand forecast unavailable</p>
+                  <p className="text-xs mt-1 text-red-500">
+                    {(forecast as any)?._error || "Failed to load forecast data from server."}
+                  </p>
+                </div>
+              ) : (
+                <>
+                  {/* Primary disclaimer — must be visible at all times */}
+                  <div className="text-xs text-amber-800 bg-amber-50 p-2.5 rounded-md flex items-start gap-2 border border-amber-200">
+                    <Info className="h-4 w-4 shrink-0 mt-0.5 text-amber-600" />
+                    <div className="space-y-1">
+                      <p className="font-semibold">Model Demo — trained on public European hotel booking data</p>
+                      <p>Demo forecasts use simulated historical context because Smart Resort does not yet have sufficient historical booking data for this model. This does not represent Smart Resort actual demand.</p>
+                    </div>
+                  </div>
+
+                  {/* 7-day grid */}
+                  <div className="grid grid-cols-7 gap-1.5">
+                    {forecast.forecast.map((day, idx) => (
+                      <div key={idx} className="flex flex-col border rounded-md overflow-hidden relative">
+                        <div className="bg-slate-50 text-center py-1 text-xs font-semibold text-slate-600 border-b">
+                          {new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' })}
+                        </div>
+                        <div className="text-center py-3 flex-1 flex flex-col justify-center">
+                          <span className="text-xl font-bold">{day.predicted_demand}</span>
+                          <span className="text-[10px] text-muted-foreground mt-0.5">est. rooms</span>
+                        </div>
+                        {day.event && (
+                          <div
+                            className="absolute top-1 right-1"
+                            title={`Event: ${day.event.name}`}
+                          >
+                            <div className="h-2 w-2 rounded-full bg-indigo-500"></div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Planning Signals — only rendered if events overlap forecast window */}
+                  {forecast.forecast.some(d => d.planning_signal) && (
+                    <div className="p-3 bg-indigo-50 border border-indigo-100 rounded-md">
+                      <div className="flex items-center gap-2 mb-2">
+                        <CalendarDays className="h-4 w-4 text-indigo-700" />
+                        <span className="text-sm font-semibold text-indigo-900">Upcoming Events (Rule-Based Planning Signal)</span>
+                      </div>
+                      <ul className="text-sm text-indigo-800 space-y-1">
+                        {forecast.forecast.filter(d => d.planning_signal).map((d, i) => (
+                          <li key={i} className="flex items-start gap-2">
+                            <span className="font-medium whitespace-nowrap">
+                              {new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}:
+                            </span>
+                            <span>{d.planning_signal}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </>
+              )}
             </CardContent>
           </Card>
 
