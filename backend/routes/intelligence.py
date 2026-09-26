@@ -26,7 +26,7 @@ def get_next_action(db: Session = Depends(get_db)):
         staff_task_counts[s.id] = count
 
     # 2. Get AI or Rule-based recommendation
-    recommendation = get_next_best_action(active_tasks, staff, rooms, staff_task_counts)
+    recommendation = get_next_best_action(db, active_tasks, staff, rooms, staff_task_counts)
     
     # 3. Audit Logging (Deduplicated)
     import datetime
