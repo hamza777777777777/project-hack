@@ -101,26 +101,26 @@ function VerificationPage() {
           </div>
         ) : (
           queue.map(task => (
-            <Card key={task.id} className="border-indigo-100">
+            <Card key={task.id} className="border-border bg-card">
               <CardHeader className="pb-3">
                 <div className="flex justify-between items-start">
-                  <Badge variant="outline" className="bg-indigo-50 text-indigo-700">
+                  <Badge variant="outline" className="bg-[#0052ff]/10 text-primary border-[#0052ff]/20">
                     Verification Pending
                   </Badge>
                   <span className="text-xs text-muted-foreground">{task.id}</span>
                 </div>
-                <CardTitle className="text-lg mt-2">{task.title}</CardTitle>
-                <CardDescription>Assigned to: {task.assignedTo}</CardDescription>
+                <CardTitle className="text-lg mt-2 text-foreground">{task.title}</CardTitle>
+                <CardDescription>{task.assignedTo}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 text-sm">
-                <div className="bg-muted p-3 rounded-md space-y-2">
-                  <div className="font-medium border-b pb-1">Completion Notes:</div>
+                <div className="bg-secondary/50 p-3 rounded-xl border border-border space-y-2">
+                  <div className="font-medium border-b border-border pb-1 text-foreground">Completion Notes:</div>
                   <p className="italic text-muted-foreground">
                     "{task.completionNotes || 'No notes provided.'}"
                   </p>
                 </div>
 
-                <div className="border-2 border-dashed rounded-md h-32 flex flex-col items-center justify-center text-muted-foreground bg-slate-50 overflow-hidden relative">
+                <div className="border border-dashed border-border rounded-xl h-32 flex flex-col items-center justify-center text-muted-foreground bg-secondary/30 overflow-hidden relative">
                   {task.completionProofPath ? (
                     <img
                       src={`${import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'}/${task.completionProofPath}`}

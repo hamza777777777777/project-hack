@@ -79,26 +79,26 @@ function mapApiToTask(tData: TaskResponse): Task {
   }
 }
 
-// ── Color helpers (original style) ───────────────────────────────────────────
+// ── Color helpers (UI.md semantic tokens) ───────────────────────────────────
 function getPriorityColor(p: string): string {
   switch (p) {
-    case 'critical': return 'bg-red-100 text-red-800'
-    case 'high':     return 'bg-orange-100 text-orange-800'
-    case 'medium':   return 'bg-blue-100 text-blue-800'
-    case 'low':      return 'bg-slate-100 text-slate-800'
-    default:         return 'bg-slate-100 text-slate-800'
+    case 'critical': return 'bg-[#cf202f]/10 text-[#cf202f] border border-[#cf202f]/20'
+    case 'high':     return 'bg-[#f4b000]/10 text-[#f4b000] border border-[#f4b000]/20'
+    case 'medium':   return 'bg-[#0052ff]/10 text-[#0052ff] border border-[#0052ff]/20'
+    case 'low':      return 'bg-secondary text-muted-foreground border border-border'
+    default:         return 'bg-secondary text-muted-foreground border border-border'
   }
 }
 
 function getStatusBadge(s: TaskStatus): string {
   switch (s) {
-    case 'Created':     return 'bg-slate-100 text-slate-800'
-    case 'Assigned':    return 'bg-blue-100 text-blue-800'
-    case 'In Progress': return 'bg-yellow-100 text-yellow-800'
-    case 'Completed':   return 'bg-purple-100 text-purple-800'
-    case 'Verified':    return 'bg-green-100 text-green-800'
-    case 'Closed':      return 'bg-slate-100 text-slate-800'
-    default:            return 'bg-slate-100 text-slate-800'
+    case 'Created':     return 'bg-secondary text-muted-foreground border border-border'
+    case 'Assigned':    return 'bg-[#0052ff]/10 text-[#0052ff] border border-[#0052ff]/20'
+    case 'In Progress': return 'bg-[#f4b000]/10 text-[#f4b000] border border-[#f4b000]/20'
+    case 'Completed':   return 'bg-[#05b169]/10 text-[#05b169] border border-[#05b169]/20'
+    case 'Verified':    return 'bg-[#05b169]/15 text-[#05b169] border border-[#05b169]/30 font-semibold'
+    case 'Closed':      return 'bg-secondary text-muted-foreground border border-border'
+    default:            return 'bg-secondary text-muted-foreground border border-border'
   }
 }
 
@@ -109,8 +109,8 @@ function getSLAIndicator(task: Task): React.ReactElement | null {
   
   if (task.slaStatus === 'on_track') {
     return (
-      <Badge variant="outline" className="bg-slate-50 text-slate-700 border-slate-200 text-[10px] uppercase font-semibold whitespace-nowrap">
-        <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5 inline-block" />
+      <Badge variant="outline" className="bg-[#05b169]/10 text-[#05b169] border-[#05b169]/30 text-[10px] uppercase font-semibold whitespace-nowrap">
+        <div className="h-1.5 w-1.5 rounded-full bg-[#05b169] mr-1.5 inline-block" />
         ON TRACK {task.minutesRemaining != null ? `— ${task.minutesRemaining} min remaining` : ''}
       </Badge>
     );
@@ -118,8 +118,8 @@ function getSLAIndicator(task: Task): React.ReactElement | null {
   
   if (task.slaStatus === 'at_risk') {
     return (
-      <Badge variant="outline" className="bg-yellow-50 text-yellow-800 border-yellow-200 text-[10px] uppercase font-semibold whitespace-nowrap">
-        <div className="h-1.5 w-1.5 rounded-full bg-yellow-500 mr-1.5 inline-block" />
+      <Badge variant="outline" className="bg-[#f4b000]/10 text-[#f4b000] border-[#f4b000]/30 text-[10px] uppercase font-semibold whitespace-nowrap">
+        <div className="h-1.5 w-1.5 rounded-full bg-[#f4b000] mr-1.5 inline-block" />
         AT RISK {task.minutesRemaining != null ? `— ${task.minutesRemaining} min remaining` : ''}
       </Badge>
     );
@@ -127,8 +127,8 @@ function getSLAIndicator(task: Task): React.ReactElement | null {
   
   if (task.slaStatus === 'stalled') {
     return (
-      <Badge variant="outline" className="bg-orange-50 text-orange-800 border-orange-200 text-[10px] uppercase font-semibold whitespace-nowrap">
-        <div className="h-1.5 w-1.5 rounded-full bg-orange-500 mr-1.5 inline-block" />
+      <Badge variant="outline" className="bg-[#f4b000]/15 text-[#f4b000] border-[#f4b000]/40 text-[10px] uppercase font-semibold whitespace-nowrap">
+        <div className="h-1.5 w-1.5 rounded-full bg-[#f4b000] mr-1.5 inline-block" />
         STALLED {task.minutesInactive != null ? `— no activity for ${task.minutesInactive} min` : ''}
       </Badge>
     );
@@ -136,8 +136,8 @@ function getSLAIndicator(task: Task): React.ReactElement | null {
   
   if (task.slaStatus === 'overdue') {
     return (
-      <Badge variant="outline" className="bg-red-50 text-red-800 border-red-200 text-[10px] uppercase font-semibold whitespace-nowrap">
-        <div className="h-1.5 w-1.5 rounded-full bg-red-500 mr-1.5 inline-block" />
+      <Badge variant="outline" className="bg-[#cf202f]/10 text-[#cf202f] border-[#cf202f]/30 text-[10px] uppercase font-semibold whitespace-nowrap">
+        <div className="h-1.5 w-1.5 rounded-full bg-[#cf202f] mr-1.5 inline-block" />
         OVERDUE {task.minutesOverdue != null ? `— by ${task.minutesOverdue} min` : ''}
       </Badge>
     );

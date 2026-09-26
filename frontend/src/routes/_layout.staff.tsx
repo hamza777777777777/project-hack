@@ -75,7 +75,7 @@ function StaffPage() {
                     <CardDescription>{s.department}</CardDescription>
                   </div>
                 </div>
-                <Badge variant="outline" className={s.available ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}>
+                <Badge variant="outline" className={s.available ? 'bg-[#05b169]/10 text-[#05b169] border-[#05b169]/30' : 'bg-[#f4b000]/10 text-[#f4b000] border-[#f4b000]/30'}>
                   {s.available ? 'Available' : 'Busy'}
                 </Badge>
               </CardHeader>

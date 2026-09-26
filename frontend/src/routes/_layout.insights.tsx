@@ -65,19 +65,19 @@ function InsightsPage() {
               </CardContent>
             </Card>
 
-            <Card className="md:col-span-2 bg-indigo-50/50 border-indigo-100">
+            <Card className="md:col-span-2 bg-secondary/30 border-border">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium flex items-center">
-                  <BrainCircuit className="h-4 w-4 mr-2 text-indigo-500" /> AI Staffing Recommendation
+                <CardTitle className="text-sm font-medium flex items-center text-foreground">
+                  <BrainCircuit className="h-4 w-4 mr-2 text-primary" /> AI Staffing Recommendation
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm">
+                <p className="text-sm text-foreground">
                   Based on historical trends, you will need <strong>2 additional housekeeping staff</strong> between 10:00 AM and 2:00 PM tomorrow due to a high volume of check-outs (15 rooms).
                 </p>
                 <div className="mt-3 flex gap-2">
-                  <Badge variant="secondary" className="bg-white">Confidence: 94%</Badge>
-                  <Badge variant="secondary" className="bg-white">Actionable</Badge>
+                  <Badge variant="secondary" className="bg-card text-foreground border border-border">Confidence: 94%</Badge>
+                  <Badge variant="secondary" className="bg-card text-foreground border border-border">Actionable</Badge>
                 </div>
               </CardContent>
             </Card>
@@ -88,34 +88,34 @@ function InsightsPage() {
         <section>
           <div className="flex items-center gap-2 mb-4">
             <Users className="h-5 w-5 text-muted-foreground" />
-            <h2 className="text-xl font-semibold">Guest Experience</h2>
+            <h2 className="text-xl font-semibold text-foreground">Guest Experience</h2>
           </div>
           <div className="grid gap-4 md:grid-cols-3">
-            <Card>
+            <Card className="border-border bg-card">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">Sentiment Score</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-green-600">4.2 / 5</div>
-                <div className="flex items-center text-xs mt-1 text-green-600">
+                <div className="text-3xl font-bold text-[#05b169]">4.2 / 5</div>
+                <div className="flex items-center text-xs mt-1 text-[#05b169]">
                   <TrendingUp className="h-3 w-3 mr-1" /> Stable
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="col-span-2">
+            <Card className="col-span-2 border-border bg-card">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">Emerging Complaint Trend</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-start gap-3">
-                  <AlertTriangle className="h-5 w-5 text-orange-500 mt-0.5" />
+                  <AlertTriangle className="h-5 w-5 text-[#f4b000] mt-0.5" />
                   <div>
-                    <h4 className="font-semibold text-base">AC Cooling Issues in North Wing</h4>
+                    <h4 className="font-semibold text-base text-foreground">AC Cooling Issues in North Wing</h4>
                     <p className="text-sm text-muted-foreground mt-1">
                       NLP analysis of the last 48 hours shows a 40% spike in complaints regarding "AC not cooling" specifically in the North Wing (Rooms 200-220).
                     </p>
-                    <p className="text-sm font-medium text-indigo-700 mt-2">
+                    <p className="text-sm font-medium text-primary mt-2">
                       Recommendation: Schedule preventative maintenance for North Wing HVAC system.
                     </p>
                   </div>
@@ -129,36 +129,36 @@ function InsightsPage() {
         <section>
           <div className="flex items-center gap-2 mb-4">
             <Target className="h-5 w-5 text-muted-foreground" />
-            <h2 className="text-xl font-semibold">Revenue & Market</h2>
+            <h2 className="text-xl font-semibold text-foreground">Revenue & Market</h2>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
-            <Card>
+            <Card className="border-border bg-card">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">Forecasted Occupancy</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">88%</div>
+                <div className="text-3xl font-bold text-foreground">88%</div>
                 <div className="flex items-center text-xs mt-1 text-muted-foreground">
                   Next weekend (Diwali)
                 </div>
-                <div className="mt-4 p-3 bg-muted rounded-md text-sm">
+                <div className="mt-4 p-3 bg-secondary/50 rounded-xl text-sm border border-border text-foreground">
                   Pacing 12% ahead of same time last year. Market average is currently at 82%.
                 </div>
               </CardContent>
             </Card>
             
-            <Card className="bg-emerald-50/50 border-emerald-100">
+            <Card className="bg-secondary/30 border-border">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium flex items-center">
-                  <BrainCircuit className="h-4 w-4 mr-2 text-emerald-500" /> Pricing Opportunity
+                <CardTitle className="text-sm font-medium flex items-center text-foreground">
+                  <BrainCircuit className="h-4 w-4 mr-2 text-primary" /> Pricing Opportunity
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm">
+                <p className="text-sm text-foreground">
                   Competitor "Beach Paradise" has sold out their Family Suites. 
                 </p>
-                <div className="mt-3 p-3 bg-white border border-emerald-200 rounded-md shadow-sm">
-                  <p className="text-sm font-medium text-emerald-800">
+                <div className="mt-3 p-3 bg-card border border-border rounded-xl shadow-xs">
+                  <p className="text-sm font-medium text-foreground">
                     Increase Family Suite rate by 15% (₹1,200) for the upcoming weekend. Estimated revenue impact: +₹14,400.
                   </p>
                 </div>

@@ -62,24 +62,24 @@ function mapApiToComplaint(c: ComplaintResponse & { classification?: any; assign
   }
 }
 
-// ── Color helpers (original style) ──────────────────────────────────────────
+// ── Color helpers (UI.md semantic tokens) ──────────────────────────────────
 function getPriorityColor(p: Priority): string {
   switch (p) {
-    case 'critical': return 'bg-red-100 text-red-800'
-    case 'high':     return 'bg-orange-100 text-orange-800'
-    case 'medium':   return 'bg-blue-100 text-blue-800'
-    case 'low':      return 'bg-slate-100 text-slate-800'
-    default:         return 'bg-slate-100 text-slate-800'
+    case 'critical': return 'bg-[#cf202f]/10 text-[#cf202f] border border-[#cf202f]/20'
+    case 'high':     return 'bg-[#f4b000]/10 text-[#f4b000] border border-[#f4b000]/20'
+    case 'medium':   return 'bg-[#0052ff]/10 text-[#0052ff] border border-[#0052ff]/20'
+    case 'low':      return 'bg-secondary text-muted-foreground border border-border'
+    default:         return 'bg-secondary text-muted-foreground border border-border'
   }
 }
 
 function getStatusColor(s: ComplaintStatus): string {
   switch (s) {
-    case 'open':        return 'bg-yellow-100 text-yellow-800'
-    case 'in_progress': return 'bg-blue-100 text-blue-800'
-    case 'resolved':    return 'bg-green-100 text-green-800'
-    case 'closed':      return 'bg-slate-100 text-slate-800'
-    default:            return 'bg-slate-100 text-slate-800'
+    case 'open':        return 'bg-[#f4b000]/10 text-[#f4b000] border border-[#f4b000]/20'
+    case 'in_progress': return 'bg-[#0052ff]/10 text-[#0052ff] border border-[#0052ff]/20'
+    case 'resolved':    return 'bg-[#05b169]/10 text-[#05b169] border border-[#05b169]/20'
+    case 'closed':      return 'bg-secondary text-muted-foreground border border-border'
+    default:            return 'bg-secondary text-muted-foreground border border-border'
   }
 }
 

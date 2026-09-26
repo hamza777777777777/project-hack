@@ -14,30 +14,30 @@ export const Route = createFileRoute('/_layout/recommendations')({
 
 function RoomCard({ room }: { room: MatchedRoom }) {
   const typeColors: Record<string, string> = {
-    Suite: 'bg-purple-100 text-purple-800',
-    Deluxe: 'bg-blue-100 text-blue-800',
-    Family: 'bg-green-100 text-green-800',
-    Standard: 'bg-slate-100 text-slate-700',
+    Suite: 'bg-[#0052ff]/10 text-primary border-[#0052ff]/20',
+    Deluxe: 'bg-[#0052ff]/10 text-primary border-[#0052ff]/20',
+    Family: 'bg-[#05b169]/10 text-[#05b169] border-[#05b169]/20',
+    Standard: 'bg-secondary text-muted-foreground border-border',
   }
 
   return (
-    <Card className="border-l-4 border-l-indigo-400">
+    <Card className="border-l-4 border-l-primary bg-card border-border">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div>
-            <CardTitle className="text-base">
+            <CardTitle className="text-base text-foreground">
               Room {room.room_number}
-              <Badge className={`ml-2 text-xs font-normal ${typeColors[room.room_type] ?? 'bg-muted'}`}>
+              <Badge className={`ml-2 text-xs font-normal border ${typeColors[room.room_type] ?? 'bg-secondary text-foreground'}`}>
                 {room.room_type}
               </Badge>
             </CardTitle>
             <CardDescription className="mt-1 flex items-center gap-1">
-              <CheckCircle2 className="h-3 w-3 text-green-500" />
+              <CheckCircle2 className="h-3 w-3 text-[#05b169]" />
               Available · Floor {room.floor ?? '—'}
             </CardDescription>
           </div>
           <div className="text-right">
-            <div className="flex items-center text-xl font-bold">
+            <div className="flex items-center text-xl font-bold text-foreground">
               <IndianRupee className="h-4 w-4 mt-0.5" />
               {room.base_rate.toLocaleString()}
             </div>
@@ -46,8 +46,8 @@ function RoomCard({ room }: { room: MatchedRoom }) {
         </div>
       </CardHeader>
       <CardContent className="space-y-2">
-        <div className="p-3 bg-indigo-50 border border-indigo-100 rounded-md text-sm text-indigo-900">
-          <span className="font-semibold">Why this room: </span>
+        <div className="p-3 bg-[#0052ff]/10 border border-[#0052ff]/20 rounded-xl text-sm text-foreground">
+          <span className="font-semibold text-primary">Why this room: </span>
           {room.explanation}
         </div>
         <div className="text-xs text-muted-foreground flex items-center gap-1">

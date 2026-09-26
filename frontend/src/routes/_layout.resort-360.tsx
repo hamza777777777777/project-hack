@@ -33,21 +33,21 @@ export const Route = createFileRoute('/_layout/resort-360')({
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 const TASK_STATUS_COLORS: Record<string, string> = {
-  created:     'bg-slate-100 text-slate-700',
-  assigned:    'bg-blue-100 text-blue-800',
-  in_progress: 'bg-yellow-100 text-yellow-800',
-  completed:   'bg-purple-100 text-purple-800',
-  verified:    'bg-green-100 text-green-800',
-  closed:      'bg-slate-100 text-slate-500',
+  created:     'bg-secondary text-muted-foreground border border-border',
+  assigned:    'bg-[#0052ff]/10 text-[#0052ff] border border-[#0052ff]/20',
+  in_progress: 'bg-[#f4b000]/10 text-[#f4b000] border border-[#f4b000]/20',
+  completed:   'bg-[#05b169]/10 text-[#05b169] border border-[#05b169]/20',
+  verified:    'bg-[#05b169]/15 text-[#05b169] border border-[#05b169]/30 font-semibold',
+  closed:      'bg-secondary text-muted-foreground border border-border',
 }
 
 const PRIORITY_COLORS: Record<string, string> = {
-  critical: 'bg-red-100 text-red-800',
-  high:     'bg-orange-100 text-orange-800',
-  High:     'bg-orange-100 text-orange-800',
-  Critical: 'bg-red-100 text-red-800',
-  medium:   'bg-blue-100 text-blue-800',
-  low:      'bg-slate-100 text-slate-700',
+  critical: 'bg-[#cf202f]/10 text-[#cf202f] border border-[#cf202f]/20',
+  Critical: 'bg-[#cf202f]/10 text-[#cf202f] border border-[#cf202f]/20',
+  high:     'bg-[#f4b000]/10 text-[#f4b000] border border-[#f4b000]/20',
+  High:     'bg-[#f4b000]/10 text-[#f4b000] border border-[#f4b000]/20',
+  medium:   'bg-[#0052ff]/10 text-[#0052ff] border border-[#0052ff]/20',
+  low:      'bg-secondary text-muted-foreground border border-border',
 }
 
 function StatusDot({ color }: { color: string }) {

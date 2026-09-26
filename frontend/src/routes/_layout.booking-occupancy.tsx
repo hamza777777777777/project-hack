@@ -230,8 +230,8 @@ function BookingOccupancyPage() {
                             <div className="text-sm font-medium text-muted-foreground">{room.room_type}</div>
                             <div className="text-xl font-bold">Room {room.room_number} <span className="text-sm font-normal text-muted-foreground ml-1">• Floor {room.floor}</span></div>
                           </div>
-                          <div className={`text-xs font-semibold px-2 py-1 rounded-full flex items-center gap-1.5 ${isBooked ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
-                            <div className={`w-2 h-2 rounded-full ${isBooked ? 'bg-red-500' : 'bg-green-500'}`} />
+                          <div className={`text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 ${isBooked ? 'bg-[#cf202f]/10 text-[#cf202f] border border-[#cf202f]/20' : 'bg-[#05b169]/10 text-[#05b169] border border-[#05b169]/20'}`}>
+                            <div className={`w-2 h-2 rounded-full ${isBooked ? 'bg-[#cf202f]' : 'bg-[#05b169]'}`} />
                             {isBooked ? 'Booked' : 'Available'}
                           </div>
                         </div>
@@ -243,7 +243,7 @@ function BookingOccupancyPage() {
                         <div className="mt-4 space-y-1 text-sm text-muted-foreground">
                           <div>Up to {room.max_adults} adults{room.max_children > 0 ? ` · ${room.max_children} child${room.max_children > 1 ? 'ren' : ''}` : ''}</div>
                           {room.has_extra_bed_option && (
-                            <div className="text-primary">Extra bed available (₹{room.extra_bed_price})</div>
+                            <div className="text-primary font-medium">Extra bed available (₹{room.extra_bed_price})</div>
                           )}
                         </div>
 
@@ -286,8 +286,8 @@ function BookingOccupancyPage() {
                  <div className="w-full sm:w-3/5 flex flex-col justify-center">
                     <div className="flex justify-between items-start">
                        <h3 className="text-2xl font-bold">{selectedRoom.room_type}</h3>
-                       <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted text-xs font-medium capitalize">
-                         <div className={`w-2 h-2 rounded-full ${selectedRoom.status === 'available' ? 'bg-green-500' : 'bg-red-500'}`} />
+                       <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary text-xs font-medium capitalize">
+                         <div className={`w-2 h-2 rounded-full ${selectedRoom.status === 'available' ? 'bg-[#05b169]' : 'bg-[#cf202f]'}`} />
                          {selectedRoom.status}
                        </div>
                     </div>
@@ -302,14 +302,14 @@ function BookingOccupancyPage() {
               </div>
 
               {/* LAYER 3: BOOKING FORM */}
-              <div className="bg-muted/30 p-5 rounded-lg border space-y-4">
+              <div className="bg-secondary/40 p-5 rounded-xl border border-border space-y-4">
                 {bookingSuccessData ? (
                   <div className="flex flex-col items-center justify-center text-center space-y-4 py-4 animate-in fade-in zoom-in">
-                    <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 mb-2">
+                    <div className="w-12 h-12 rounded-full bg-[#05b169]/15 flex items-center justify-center text-[#05b169] mb-2">
                       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                     </div>
                     <div>
-                      <h4 className="font-bold text-xl text-green-700">Booking Confirmed</h4>
+                      <h4 className="font-bold text-xl text-[#05b169]">Booking Confirmed</h4>
                     </div>
                     <div className="w-full py-3 my-2 text-sm text-center space-y-1">
                        <div className="font-medium">Room {bookingSuccessData.room} — {selectedRoom.room_type}</div>
@@ -318,31 +318,31 @@ function BookingOccupancyPage() {
                     </div>
                     
                     {bookingSuccessData.cancellation_risk && (
-                      <div className="mt-4 pt-4 border-t">
-                        <h4 className="font-semibold text-sm mb-3 text-slate-700">Cancellation Risk</h4>
-                        <div className="p-4 rounded-md border bg-slate-50 flex items-center gap-4">
+                      <div className="mt-4 pt-4 border-t border-border w-full">
+                        <h4 className="font-semibold text-sm mb-3 text-foreground">Cancellation Risk</h4>
+                        <div className="p-4 rounded-xl border border-border bg-card flex items-center gap-4 text-left">
                           <div className={`p-3 rounded-full flex items-center justify-center text-lg font-bold w-16 h-16
-                            ${bookingSuccessData.cancellation_risk.risk_level === 'High' ? 'bg-red-100 text-red-700 border border-red-200' : 
-                              bookingSuccessData.cancellation_risk.risk_level === 'Medium' ? 'bg-amber-100 text-amber-700 border border-amber-200' : 
-                              'bg-green-100 text-green-700 border border-green-200'}`}
+                            ${bookingSuccessData.cancellation_risk.risk_level === 'High' ? 'bg-[#cf202f]/10 text-[#cf202f] border border-[#cf202f]/20' : 
+                              bookingSuccessData.cancellation_risk.risk_level === 'Medium' ? 'bg-[#f4b000]/10 text-[#f4b000] border border-[#f4b000]/20' : 
+                              'bg-[#05b169]/10 text-[#05b169] border border-[#05b169]/20'}`}
                           >
                             {Math.round(bookingSuccessData.cancellation_risk.probability * 100 * 10) / 10}%
                           </div>
                           <div>
                             <div className={`font-bold ${
-                              bookingSuccessData.cancellation_risk.risk_level === 'High' ? 'text-red-700' : 
-                              bookingSuccessData.cancellation_risk.risk_level === 'Medium' ? 'text-amber-700' : 
-                              'text-green-700'
+                              bookingSuccessData.cancellation_risk.risk_level === 'High' ? 'text-[#cf202f]' : 
+                              bookingSuccessData.cancellation_risk.risk_level === 'Medium' ? 'text-[#f4b000]' : 
+                              'text-[#05b169]'
                             }`}>
                               {bookingSuccessData.cancellation_risk.risk_level} Risk
                             </div>
-                            <div className="text-xs text-slate-500 mt-1">Based on booking details available at creation time.</div>
-                            <div className="text-[10px] text-slate-400 mt-1 italic">Guest history: Unavailable — authentication not yet implemented.</div>
+                            <div className="text-xs text-muted-foreground mt-1">Based on booking details available at creation time.</div>
+                            <div className="text-[10px] text-muted-foreground/80 mt-1 italic">Guest history: Unavailable — authentication not yet implemented.</div>
                           </div>
                         </div>
                       </div>
                     )}
-                    <Button className="w-full mt-4" variant="outline" onClick={() => handleCloseModal(false)}>Done</Button>
+                    <Button className="w-full mt-4 rounded-full" variant="outline" onClick={() => handleCloseModal(false)}>Done</Button>
                   </div>
                 ) : (
                   <>
@@ -419,20 +419,20 @@ function BookingOccupancyPage() {
                     )}
 
                     {availabilityResult === 'error' && (
-                      <div className="p-3 bg-red-50 border border-red-200 text-red-800 rounded-md text-sm text-center font-medium mt-4">
+                      <div className="p-3 bg-[#cf202f]/10 border border-[#cf202f]/20 text-[#cf202f] rounded-lg text-sm text-center font-medium mt-4">
                         Unable to check availability. Please try again.
                       </div>
                     )}
 
                     {availabilityResult === 'unavailable' && (
-                      <div className="p-3 bg-red-50 border border-red-200 text-red-800 rounded-md text-sm text-center font-medium mt-4">
+                      <div className="p-3 bg-[#cf202f]/10 border border-[#cf202f]/20 text-[#cf202f] rounded-lg text-sm text-center font-medium mt-4">
                         ✕ Room is already booked for these dates
                       </div>
                     )}
 
                     {availabilityResult === 'available' && (
                       <div className="space-y-4 animate-in fade-in slide-in-from-top-2 pt-2 mt-4">
-                        <div className="p-3 bg-green-50 border border-green-200 text-green-800 rounded-md text-sm text-center font-medium flex items-center justify-center gap-2">
+                        <div className="p-3 bg-[#05b169]/10 border border-[#05b169]/20 text-[#05b169] rounded-lg text-sm text-center font-medium flex items-center justify-center gap-2">
                            ✓ Room available for these dates
                         </div>
                         
@@ -452,12 +452,12 @@ function BookingOccupancyPage() {
                                   <Button 
                                     variant={!extraBedSelected ? "default" : "outline"} 
                                     onClick={() => setExtraBedSelected(false)}
-                                    className="flex-1"
+                                    className="flex-1 rounded-full"
                                   >No</Button>
                                   <Button 
                                     variant={extraBedSelected ? "default" : "outline"} 
                                     onClick={() => setExtraBedSelected(true)}
-                                    className="flex-1"
+                                    className="flex-1 rounded-full"
                                   >Yes</Button>
                                </div>
                             ) : (
@@ -469,89 +469,89 @@ function BookingOccupancyPage() {
                     )}
 
                     {availabilityResult === 'available' && (
-                      <div className="mt-6 pt-6 border-t animate-in fade-in slide-in-from-bottom-4">
+                      <div className="mt-6 pt-6 border-t border-border animate-in fade-in slide-in-from-bottom-4">
                         <h4 className="font-semibold text-sm mb-4">Booking Details</h4>
                         <div className="space-y-4">
                           <div className="grid grid-cols-2 gap-4">
                             <div className="grid gap-2">
                               <Label>Guest Country</Label>
                               <select 
-                                className="flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                                className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-card text-foreground px-3 py-2 text-sm shadow-xs focus:outline-none focus:ring-1 focus:ring-ring"
                                 value={guestCountry} 
                                 onChange={e => setGuestCountry(e.target.value)}
                               >
-                                <option value="PRT">Portugal (PRT)</option>
-                                <option value="GBR">United Kingdom (GBR)</option>
-                                <option value="FRA">France (FRA)</option>
-                                <option value="ESP">Spain (ESP)</option>
-                                <option value="DEU">Germany (DEU)</option>
-                                <option value="ITA">Italy (ITA)</option>
-                                <option value="IRL">Ireland (IRL)</option>
-                                <option value="BEL">Belgium (BEL)</option>
-                                <option value="BRA">Brazil (BRA)</option>
-                                <option value="NLD">Netherlands (NLD)</option>
-                                <option value="USA">United States (USA)</option>
-                                <option value="CHE">Switzerland (CHE)</option>
-                                <option value="AUT">Austria (AUT)</option>
-                                <option value="SWE">Sweden (SWE)</option>
-                                <option value="CHN">China (CHN)</option>
-                                <option value="POL">Poland (POL)</option>
-                                <option value="IND">India (IND)</option>
+                                <option value="PRT" className="bg-card text-foreground">Portugal (PRT)</option>
+                                <option value="GBR" className="bg-card text-foreground">United Kingdom (GBR)</option>
+                                <option value="FRA" className="bg-card text-foreground">France (FRA)</option>
+                                <option value="ESP" className="bg-card text-foreground">Spain (ESP)</option>
+                                <option value="DEU" className="bg-card text-foreground">Germany (DEU)</option>
+                                <option value="ITA" className="bg-card text-foreground">Italy (ITA)</option>
+                                <option value="IRL" className="bg-card text-foreground">Ireland (IRL)</option>
+                                <option value="BEL" className="bg-card text-foreground">Belgium (BEL)</option>
+                                <option value="BRA" className="bg-card text-foreground">Brazil (BRA)</option>
+                                <option value="NLD" className="bg-card text-foreground">Netherlands (NLD)</option>
+                                <option value="USA" className="bg-card text-foreground">United States (USA)</option>
+                                <option value="CHE" className="bg-card text-foreground">Switzerland (CHE)</option>
+                                <option value="AUT" className="bg-card text-foreground">Austria (AUT)</option>
+                                <option value="SWE" className="bg-card text-foreground">Sweden (SWE)</option>
+                                <option value="CHN" className="bg-card text-foreground">China (CHN)</option>
+                                <option value="POL" className="bg-card text-foreground">Poland (POL)</option>
+                                <option value="IND" className="bg-card text-foreground">India (IND)</option>
                               </select>
                             </div>
                             
                             <div className="grid gap-2">
                               <Label>Booking Channel</Label>
                               <select 
-                                className="flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                                className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-card text-foreground px-3 py-2 text-sm shadow-xs focus:outline-none focus:ring-1 focus:ring-ring"
                                 value={bookingChannel} 
                                 onChange={e => setBookingChannel(e.target.value)}
                               >
-                                <option value="Direct">Direct</option>
-                                <option value="Website">Website</option>
-                                <option value="Travel Agent">Travel Agent</option>
-                                <option value="Corporate">Corporate</option>
-                                <option value="Other">Other</option>
+                                <option value="Direct" className="bg-card text-foreground">Direct</option>
+                                <option value="Website" className="bg-card text-foreground">Website</option>
+                                <option value="Travel Agent" className="bg-card text-foreground">Travel Agent</option>
+                                <option value="Corporate" className="bg-card text-foreground">Corporate</option>
+                                <option value="Other" className="bg-card text-foreground">Other</option>
                               </select>
                             </div>
                             
                             <div className="grid gap-2">
                               <Label>Customer Type</Label>
                               <select 
-                                className="flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                                className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-card text-foreground px-3 py-2 text-sm shadow-xs focus:outline-none focus:ring-1 focus:ring-ring"
                                 value={customerType} 
                                 onChange={e => setCustomerType(e.target.value)}
                               >
-                                <option value="Transient">Transient</option>
-                                <option value="Contract">Contract</option>
-                                <option value="Group">Group</option>
+                                <option value="Transient" className="bg-card text-foreground">Transient</option>
+                                <option value="Contract" className="bg-card text-foreground">Contract</option>
+                                <option value="Group" className="bg-card text-foreground">Group</option>
                               </select>
                             </div>
                             
                             <div className="grid gap-2">
                               <Label>Deposit Type</Label>
                               <select 
-                                className="flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                                className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-card text-foreground px-3 py-2 text-sm shadow-xs focus:outline-none focus:ring-1 focus:ring-ring"
                                 value={depositType} 
                                 onChange={e => setDepositType(e.target.value)}
                               >
-                                <option value="No Deposit">No Deposit</option>
-                                <option value="Refundable">Refundable</option>
-                                <option value="Non Refund">Non-refundable</option>
+                                <option value="No Deposit" className="bg-card text-foreground">No Deposit</option>
+                                <option value="Refundable" className="bg-card text-foreground">Refundable</option>
+                                <option value="Non Refund" className="bg-card text-foreground">Non-refundable</option>
                               </select>
                             </div>
                             
                             <div className="grid gap-2">
                               <Label>Meal Plan</Label>
                               <select 
-                                className="flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                                className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-card text-foreground px-3 py-2 text-sm shadow-xs focus:outline-none focus:ring-1 focus:ring-ring"
                                 value={mealPlan} 
                                 onChange={e => setMealPlan(e.target.value)}
                               >
-                                <option value="No Meal">No Meal</option>
-                                <option value="Breakfast">Breakfast</option>
-                                <option value="Half Board">Half Board</option>
-                                <option value="Full Board">Full Board</option>
+                                <option value="No Meal" className="bg-card text-foreground">No Meal</option>
+                                <option value="Breakfast" className="bg-card text-foreground">Breakfast</option>
+                                <option value="Half Board" className="bg-card text-foreground">Half Board</option>
+                                <option value="Full Board" className="bg-card text-foreground">Full Board</option>
                               </select>
                             </div>
                           </div>
@@ -560,10 +560,10 @@ function BookingOccupancyPage() {
                             <Label>Special Requests</Label>
                             <div className="grid grid-cols-2 gap-2 mt-1">
                               {['Extra pillow', 'Early check-in', 'Airport pickup', 'High floor'].map(req => (
-                                <label key={req} className="flex items-center gap-2 text-sm">
+                                <label key={req} className="flex items-center gap-2 text-sm text-foreground">
                                   <input 
                                     type="checkbox" 
-                                    className="rounded border-gray-300 text-primary focus:ring-primary"
+                                    className="rounded border-border text-primary focus:ring-primary"
                                     checked={specialRequests.includes(req)}
                                     onChange={(e) => {
                                       if (e.target.checked) setSpecialRequests(prev => [...prev, req])
@@ -577,7 +577,7 @@ function BookingOccupancyPage() {
                           </div>
                         </div>
                         
-                        <Button onClick={handleCreateBooking} size="lg" className="w-full mt-6">Book Room</Button>
+                        <Button onClick={handleCreateBooking} size="lg" className="w-full mt-6 rounded-full font-semibold">Book Room</Button>
                       </div>
                     )}
                   </>

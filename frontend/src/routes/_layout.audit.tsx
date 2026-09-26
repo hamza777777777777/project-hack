@@ -10,21 +10,21 @@ export const Route = createFileRoute('/_layout/audit')({
 })
 
 function getIconForAction(action: string) {
-  if (action === 'COMPLAINT_PROCESSED' || action.includes('CLASSIFIED')) return <User className="h-5 w-5 text-slate-700" />
-  if (action === 'next_best_action_generated' || action.includes('AI') || action.includes('ACTION')) return <BrainCircuit className="h-5 w-5 text-indigo-700" />
-  if (action === 'TASK_STATUS_CHANGED') return <CheckSquare className="h-5 w-5 text-green-700" />
-  if (action === 'TASK_SLA_ESCALATION') return <AlertTriangle className="h-5 w-5 text-red-700" />
-  if (action === 'TASK_REASSIGNED' || action === 'STAFF_AVAILABILITY_CHANGED' || action.includes('ROOM_BOOKING')) return <UserCog className="h-5 w-5 text-purple-700" />
-  return <Activity className="h-5 w-5 text-blue-700" />
+  if (action === 'COMPLAINT_PROCESSED' || action.includes('CLASSIFIED')) return <User className="h-5 w-5 text-muted-foreground" />
+  if (action === 'next_best_action_generated' || action.includes('AI') || action.includes('ACTION')) return <BrainCircuit className="h-5 w-5 text-[#0052ff]" />
+  if (action === 'TASK_STATUS_CHANGED') return <CheckSquare className="h-5 w-5 text-[#05b169]" />
+  if (action === 'TASK_SLA_ESCALATION') return <AlertTriangle className="h-5 w-5 text-[#cf202f]" />
+  if (action === 'TASK_REASSIGNED' || action === 'STAFF_AVAILABILITY_CHANGED' || action.includes('ROOM_BOOKING')) return <UserCog className="h-5 w-5 text-[#0052ff]" />
+  return <Activity className="h-5 w-5 text-[#0052ff]" />
 }
 
 function getBgColorForAction(action: string) {
-  if (action === 'COMPLAINT_PROCESSED' || action.includes('CLASSIFIED')) return 'bg-slate-100'
-  if (action === 'next_best_action_generated' || action.includes('AI') || action.includes('ACTION')) return 'bg-indigo-100'
-  if (action === 'TASK_STATUS_CHANGED') return 'bg-green-100'
-  if (action === 'TASK_SLA_ESCALATION') return 'bg-red-100'
-  if (action === 'TASK_REASSIGNED' || action === 'STAFF_AVAILABILITY_CHANGED' || action.includes('ROOM_BOOKING')) return 'bg-purple-100'
-  return 'bg-blue-100'
+  if (action === 'COMPLAINT_PROCESSED' || action.includes('CLASSIFIED')) return 'bg-secondary'
+  if (action === 'next_best_action_generated' || action.includes('AI') || action.includes('ACTION')) return 'bg-[#0052ff]/10'
+  if (action === 'TASK_STATUS_CHANGED') return 'bg-[#05b169]/10'
+  if (action === 'TASK_SLA_ESCALATION') return 'bg-[#cf202f]/10'
+  if (action === 'TASK_REASSIGNED' || action === 'STAFF_AVAILABILITY_CHANGED' || action.includes('ROOM_BOOKING')) return 'bg-[#0052ff]/10'
+  return 'bg-[#0052ff]/10'
 }
 
 function formatTitle(action: string) {
@@ -65,19 +65,19 @@ function renderDetails(action: string, details: any) {
 
   if (action === 'TASK_SLA_ESCALATION') {
     return (
-      <div className="bg-white border rounded-md divide-y overflow-hidden text-sm">
-        <div className="flex bg-red-50 p-3 items-center justify-between">
+      <div className="bg-card border border-border rounded-xl divide-y divide-border overflow-hidden text-sm">
+        <div className="flex bg-[#cf202f]/10 p-3 items-center justify-between">
           <div className="flex items-center gap-2">
-             <span className="text-red-800 font-bold uppercase tracking-wider text-xs">Escalation: {details.sla_status}</span>
+             <span className="text-[#cf202f] font-bold uppercase tracking-wider text-xs">Escalation: {details.sla_status}</span>
           </div>
           <div>
-            <span className="px-2 py-0.5 rounded text-xs bg-slate-100 text-slate-800 border border-slate-200">Rule-Based</span>
+            <span className="px-2 py-0.5 rounded text-xs bg-secondary text-foreground border border-border">Rule-Based</span>
           </div>
         </div>
-        <div className="p-3 text-slate-700">
+        <div className="p-3 text-foreground">
            <strong>Reason:</strong> {details.reason}
         </div>
-        <div className="p-3 text-xs flex gap-4 text-slate-600">
+        <div className="p-3 text-xs flex gap-4 text-muted-foreground">
            <span><strong>Priority:</strong> {details.priority}</span>
            {details.staff && <span><strong>Staff:</strong> {details.staff}</span>}
            {details.minutes_remaining !== undefined && <span><strong>Remaining:</strong> {details.minutes_remaining}m</span>}
@@ -90,22 +90,22 @@ function renderDetails(action: string, details: any) {
 
   if (action === 'TASK_REASSIGNED') {
     return (
-      <div className="bg-white border rounded-md divide-y overflow-hidden text-sm">
-        <div className="flex bg-purple-50 p-3 items-center justify-between">
+      <div className="bg-card border border-border rounded-xl divide-y divide-border overflow-hidden text-sm">
+        <div className="flex bg-[#0052ff]/10 p-3 items-center justify-between">
           <div className="flex items-center gap-2">
-             <span className="text-purple-800 font-bold uppercase tracking-wider text-xs">Manager Reassignment</span>
+             <span className="text-primary font-bold uppercase tracking-wider text-xs">Manager Reassignment</span>
           </div>
           <div>
-            <span className="px-2 py-0.5 rounded text-xs bg-purple-100 text-purple-800 border border-purple-200">Manager Action</span>
+            <span className="px-2 py-0.5 rounded text-xs bg-secondary text-foreground border border-border">Manager Action</span>
           </div>
         </div>
-        <div className="p-3 grid grid-cols-2 gap-2 text-slate-700">
+        <div className="p-3 grid grid-cols-2 gap-2 text-foreground">
           <div><span className="text-muted-foreground">From:</span> <strong>{details.old_staff ?? 'Unknown'}</strong></div>
           <div><span className="text-muted-foreground">To:</span> <strong>{details.new_staff ?? 'Unknown'}</strong></div>
           <div><span className="text-muted-foreground">SLA Status at time:</span> {details.old_sla_status ?? '—'}</div>
           <div><span className="text-muted-foreground">New score:</span> {details.new_assignment_score !== undefined ? `${(details.new_assignment_score * 100).toFixed(1)}/100` : '—'}</div>
         </div>
-        <div className="p-3 text-slate-700">
+        <div className="p-3 text-foreground">
           <strong>Manager Reason:</strong> {details.reason}
         </div>
       </div>
@@ -114,16 +114,16 @@ function renderDetails(action: string, details: any) {
 
   if (action === 'STAFF_AVAILABILITY_CHANGED') {
     return (
-      <div className="bg-white border rounded-md divide-y overflow-hidden text-sm">
-        <div className="flex bg-purple-50 p-3 items-center justify-between">
+      <div className="bg-card border border-border rounded-xl divide-y divide-border overflow-hidden text-sm">
+        <div className="flex bg-[#0052ff]/10 p-3 items-center justify-between">
           <div className="flex items-center gap-2">
-             <span className="text-purple-800 font-bold uppercase tracking-wider text-xs">Manager Action</span>
+             <span className="text-primary font-bold uppercase tracking-wider text-xs">Manager Action</span>
           </div>
           <div>
-            <span className="px-2 py-0.5 rounded text-xs bg-purple-100 text-purple-800 border border-purple-200">Manual Override</span>
+            <span className="px-2 py-0.5 rounded text-xs bg-secondary text-foreground border border-border">Manual Override</span>
           </div>
         </div>
-        <div className="p-3 grid grid-cols-2 gap-2 text-slate-700">
+        <div className="p-3 grid grid-cols-2 gap-2 text-foreground">
           <div><span className="text-muted-foreground">Staff:</span> <strong>{details.staff_name ?? 'Unknown'}</strong></div>
           <div><span className="text-muted-foreground">Action:</span> Marked as <strong>{details.new_value ? 'Available' : 'Busy'}</strong></div>
         </div>
@@ -133,16 +133,16 @@ function renderDetails(action: string, details: any) {
 
   if (action === 'ROOM_BOOKING_CREATED') {
     return (
-      <div className="bg-white border rounded-md divide-y overflow-hidden text-sm">
-        <div className="flex bg-purple-50 p-3 items-center justify-between">
+      <div className="bg-card border border-border rounded-xl divide-y divide-border overflow-hidden text-sm">
+        <div className="flex bg-[#0052ff]/10 p-3 items-center justify-between">
           <div className="flex items-center gap-2">
-             <span className="text-purple-800 font-bold uppercase tracking-wider text-xs">Booking Created</span>
+             <span className="text-primary font-bold uppercase tracking-wider text-xs">Booking Created</span>
           </div>
           <div>
-            <span className="px-2 py-0.5 rounded text-xs bg-purple-100 text-purple-800 border border-purple-200">Manager Action</span>
+            <span className="px-2 py-0.5 rounded text-xs bg-secondary text-foreground border border-border">Manager Action</span>
           </div>
         </div>
-        <div className="p-3 grid grid-cols-2 gap-2 text-slate-700">
+        <div className="p-3 grid grid-cols-2 gap-2 text-foreground">
           <div><span className="text-muted-foreground">Guest ID:</span> <strong>{details.guest_id}</strong></div>
           <div><span className="text-muted-foreground">Category:</span> <strong>{details.category}</strong></div>
           <div><span className="text-muted-foreground">Check In:</span> {details.check_in_date}</div>
@@ -155,16 +155,16 @@ function renderDetails(action: string, details: any) {
 
   if (action === 'ROOM_BOOKING_CANCELLED') {
     return (
-      <div className="bg-white border rounded-md divide-y overflow-hidden text-sm">
-        <div className="flex bg-purple-50 p-3 items-center justify-between">
+      <div className="bg-card border border-border rounded-xl divide-y divide-border overflow-hidden text-sm">
+        <div className="flex bg-[#cf202f]/10 p-3 items-center justify-between">
           <div className="flex items-center gap-2">
-             <span className="text-purple-800 font-bold uppercase tracking-wider text-xs">Booking Cancelled</span>
+             <span className="text-[#cf202f] font-bold uppercase tracking-wider text-xs">Booking Cancelled</span>
           </div>
           <div>
-            <span className="px-2 py-0.5 rounded text-xs bg-purple-100 text-purple-800 border border-purple-200">Manager Action</span>
+            <span className="px-2 py-0.5 rounded text-xs bg-secondary text-foreground border border-border">Manager Action</span>
           </div>
         </div>
-        <div className="p-3 text-slate-700">
+        <div className="p-3 text-foreground">
           <span className="text-muted-foreground">Room ID:</span> <strong>{details.room_id}</strong>
         </div>
       </div>
@@ -174,8 +174,8 @@ function renderDetails(action: string, details: any) {
   // Fallback for legacy complaint_processed
   if (action === 'complaint_processed') {
     return (
-      <div className="p-4 bg-muted rounded-md text-sm border overflow-x-auto">
-        <pre className="text-xs font-mono bg-background p-3 rounded border whitespace-pre-wrap">
+      <div className="p-4 bg-muted rounded-xl text-sm border border-border overflow-x-auto">
+        <pre className="text-xs font-mono bg-background text-foreground p-3 rounded-lg border border-border whitespace-pre-wrap">
           {JSON.stringify(details, null, 2)}
         </pre>
       </div>
@@ -185,12 +185,12 @@ function renderDetails(action: string, details: any) {
   // Structured ML/Data Science rendering
   const getSourceBadge = (source: string) => {
     switch (source) {
-      case 'ml': return <span className="px-2 py-0.5 rounded text-xs bg-indigo-100 text-indigo-800 border border-indigo-200">ML</span>;
-      case 'llm': return <span className="px-2 py-0.5 rounded text-xs bg-purple-100 text-purple-800 border border-purple-200">LLM</span>;
-      case 'rule_based': return <span className="px-2 py-0.5 rounded text-xs bg-slate-100 text-slate-800 border border-slate-200">Rule-Based</span>;
-      case 'algorithmic': return <span className="px-2 py-0.5 rounded text-xs bg-blue-100 text-blue-800 border border-blue-200">Algorithmic</span>;
-      case 'statistical': return <span className="px-2 py-0.5 rounded text-xs bg-emerald-100 text-emerald-800 border border-emerald-200">Statistical</span>;
-      default: return <span className="px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-800 border border-gray-200">{source || 'System'}</span>;
+      case 'ml': return <span className="px-2 py-0.5 rounded text-xs bg-[#0052ff]/10 text-primary border border-[#0052ff]/20">ML</span>;
+      case 'llm': return <span className="px-2 py-0.5 rounded text-xs bg-[#0052ff]/10 text-primary border border-[#0052ff]/20">LLM</span>;
+      case 'rule_based': return <span className="px-2 py-0.5 rounded text-xs bg-secondary text-muted-foreground border border-border">Rule-Based</span>;
+      case 'algorithmic': return <span className="px-2 py-0.5 rounded text-xs bg-[#0052ff]/10 text-primary border border-[#0052ff]/20">Algorithmic</span>;
+      case 'statistical': return <span className="px-2 py-0.5 rounded text-xs bg-[#05b169]/10 text-[#05b169] border border-[#05b169]/20">Statistical</span>;
+      default: return <span className="px-2 py-0.5 rounded text-xs bg-secondary text-muted-foreground border border-border">{source || 'System'}</span>;
     }
   };
 
@@ -199,17 +199,17 @@ function renderDetails(action: string, details: any) {
   const algorithmValue = details.algorithm;
 
   return (
-    <div className="bg-white border rounded-md divide-y overflow-hidden text-sm">
-      <div className="flex bg-slate-50 p-3 items-center justify-between">
+    <div className="bg-card border border-border rounded-xl divide-y divide-border overflow-hidden text-sm">
+      <div className="flex bg-secondary/40 p-3 items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-muted-foreground text-xs uppercase tracking-wider font-semibold">Prediction / Decision</span>
-          <span className="font-bold text-slate-900">
+          <span className="font-bold text-foreground">
             {Array.isArray(details.prediction) ? details.prediction.join(', ') : details.prediction}
           </span>
           {details.risk_level && (
             <span className={`px-2 py-0.5 rounded text-xs font-semibold ${
-              details.risk_level === 'High' ? 'bg-red-100 text-red-800' :
-              details.risk_level === 'Medium' ? 'bg-orange-100 text-orange-800' : 'bg-green-100 text-green-800'
+              details.risk_level === 'High' ? 'bg-[#cf202f]/10 text-[#cf202f] border border-[#cf202f]/20' :
+              details.risk_level === 'Medium' ? 'bg-[#f4b000]/10 text-[#f4b000] border border-[#f4b000]/20' : 'bg-[#05b169]/10 text-[#05b169] border border-[#05b169]/20'
             }`}>
               {details.risk_level} Risk
             </span>
@@ -217,7 +217,7 @@ function renderDetails(action: string, details: any) {
         </div>
         <div className="flex gap-2">
           {confidenceValue !== undefined && (
-            <span className="px-2 py-0.5 rounded text-xs bg-green-50 text-green-700 border border-green-200 font-medium">
+            <span className="px-2 py-0.5 rounded text-xs bg-[#05b169]/10 text-[#05b169] border border-[#05b169]/20 font-medium">
               {details.cancellation_probability !== undefined ? 'Prob' : 'Conf'}: {(confidenceValue * 100).toFixed(1)}%
             </span>
           )}

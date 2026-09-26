@@ -21,6 +21,8 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
           <AppSidebar />
           <SidebarInset
             className={cn(
+              // Canvas background and foreground tokens from UI.md
+              'bg-background text-foreground',
               // Set content container, so we can use container queries
               '@container/content',
 

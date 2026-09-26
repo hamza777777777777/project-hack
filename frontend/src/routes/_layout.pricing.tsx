@@ -69,13 +69,13 @@ function PricingPage() {
                   <div className="text-3xl font-bold">₹{data.your_rate.toLocaleString()}</div>
                 </div>
                 {data.your_rate < data.market_average && (
-                  <Badge variant="outline" className="bg-amber-50 text-amber-800">Below avg</Badge>
+                  <Badge variant="outline" className="bg-[#f4b000]/10 text-[#f4b000] border-[#f4b000]/30">Below avg</Badge>
                 )}
                 {data.your_rate > data.market_average && (
-                  <Badge variant="outline" className="bg-red-50 text-red-800">Above avg</Badge>
+                  <Badge variant="outline" className="bg-[#cf202f]/10 text-[#cf202f] border-[#cf202f]/30">Above avg</Badge>
                 )}
                 {data.your_rate === data.market_average && (
-                  <Badge variant="outline" className="bg-green-50 text-green-800">Aligned</Badge>
+                  <Badge variant="outline" className="bg-[#05b169]/10 text-[#05b169] border-[#05b169]/30">Aligned</Badge>
                 )}
               </div>
               
@@ -84,37 +84,37 @@ function PricingPage() {
                 <div className="space-y-2">
                   {data.competitors.map((comp, idx) => (
                     <div key={idx} className="flex justify-between text-sm">
-                      <span>{comp.name}</span>
-                      <span className="font-medium">₹{comp.rate.toLocaleString()}</span>
+                      <span className="text-muted-foreground">{comp.name}</span>
+                      <span className="font-medium text-foreground">₹{comp.rate.toLocaleString()}</span>
                     </div>
                   ))}
                 </div>
               </div>
               
-              <div className="pt-2 border-t">
+              <div className="pt-2 border-t border-border">
                 <div className="flex justify-between text-sm font-semibold">
-                  <span>Competitor Average:</span>
-                  <span>₹{data.market_average.toLocaleString()}</span>
+                  <span className="text-muted-foreground">Competitor Average:</span>
+                  <span className="text-foreground">₹{data.market_average.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-sm font-semibold text-muted-foreground mt-1">
                   <span>Competitor Range:</span>
-                  <span>₹{data.market_min.toLocaleString()} - ₹{data.market_max.toLocaleString()}</span>
+                  <span className="text-foreground">₹{data.market_min.toLocaleString()} - ₹{data.market_max.toLocaleString()}</span>
                 </div>
               </div>
 
-              <div className={`mt-4 p-4 rounded-md border ${data.your_rate < data.market_average ? 'bg-emerald-50 text-emerald-900 border-emerald-100' : data.your_rate > data.market_average ? 'bg-red-50 text-red-900 border-red-100' : 'bg-slate-50 text-slate-800 border-slate-200'}`}>
+              <div className="mt-4 p-4 rounded-xl border border-border bg-secondary/50 text-foreground">
                 <div className="flex items-center justify-between font-bold mb-2">
                   <div className="flex items-center">
                     {data.your_rate < data.market_average ? (
-                      <TrendingUp className="h-4 w-4 mr-2" />
+                      <TrendingUp className="h-4 w-4 mr-2 text-[#05b169]" />
                     ) : data.your_rate > data.market_average ? (
-                      <TrendingDown className="h-4 w-4 mr-2" />
+                      <TrendingDown className="h-4 w-4 mr-2 text-[#cf202f]" />
                     ) : (
-                      <LineChart className="h-4 w-4 mr-2" />
+                      <LineChart className="h-4 w-4 mr-2 text-primary" />
                     )}
                     AI Recommendation
                   </div>
-                  <Badge variant="outline" className="bg-white text-[10px] uppercase">
+                  <Badge variant="outline" className="bg-card text-foreground border-border text-[10px] uppercase">
                     {data.source.replace('_', ' ')}
                   </Badge>
                 </div>

@@ -85,3 +85,79 @@
     height: 0;
   }
 }
+
+/* ── Dashboard Control Panel Animations ───────────────────────── */
+
+/* Pulse animation for LIVE status dot */
+@keyframes livePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(1.4); }
+}
+.live-dot {
+  animation: livePulse 1.8s ease-in-out infinite;
+}
+
+/* Card hover lift */
+.dashboard-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.dashboard-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+/* Animated progress bar fill */
+@keyframes fillBar {
+  from { width: 0%; }
+  to   { width: var(--bar-width, 100%); }
+}
+.animate-fill-bar {
+  animation: fillBar 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Fade-in-up entrance for status bar chips */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in-up {
+  animation: fadeInUp 0.4s ease forwards;
+}
+.fade-in-up-1 { animation-delay: 0.05s; opacity: 0; }
+.fade-in-up-2 { animation-delay: 0.12s; opacity: 0; }
+.fade-in-up-3 { animation-delay: 0.19s; opacity: 0; }
+.fade-in-up-4 { animation-delay: 0.26s; opacity: 0; }
+
+/* Sidebar active accent bar (Coinbase Blue #0052ff) */
+.sidebar-active-item {
+  position: relative;
+}
+.sidebar-active-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  background: var(--sidebar-primary);
+  border-radius: 0 3px 3px 0;
+}
+
+/* Ring gauge for staffing */
+@keyframes dashOffset {
+  from { stroke-dashoffset: 283; }
+  to   { stroke-dashoffset: var(--gauge-offset, 0); }
+}
+.gauge-circle {
+  animation: dashOffset 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Score ring */
+@keyframes scoreRing {
+  from { stroke-dashoffset: 220; }
+  to   { stroke-dashoffset: var(--score-offset, 0); }
+}
+.score-ring-circle {
+  animation: scoreRing 1.1s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards;
+}
+
