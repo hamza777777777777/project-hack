@@ -48,7 +48,7 @@ def predict_cancellation_risk(request: CancellationPredictionRequest) -> Cancell
         raise HTTPException(status_code=422, detail=f"Model inference failed: {e}")
         
     # Determine risk level based on probability
-    # Simple transparent thresholds
+    # Demo risk threshold logic (Not calibrated/statistically optimal)
     if prob < 0.30:
         risk_level = "Low"
     elif prob < 0.70:

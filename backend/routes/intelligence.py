@@ -67,7 +67,8 @@ def get_systemic_issues(db: Session = Depends(get_db)):
         AuditLog.action == "EMERGING_PATTERN"
     ).order_by(AuditLog.id.desc()).first()
     
-    pattern_title = issue.pattern_name if issue.pattern_detected else "No Pattern"
+    has_issues = len(issue.issues) > 0
+    pattern_title = issue.issues[0].title if has_issues else "No Pattern"
     
     if not last_log or last_log.details_json.get("prediction") != pattern_title:
         audit_entry = AuditLog(
@@ -79,7 +80,7 @@ def get_systemic_issues(db: Session = Depends(get_db)):
                 "algorithm": "frequency_thresholding",
                 "prediction": pattern_title,
                 "evidence": "Recent complaint volume",
-                "reasoning": issue.reasoning
+                "reasoning": issue.issues[0].summary if has_issues else "Volume below threshold."
             },
             created_at=datetime.datetime.now(datetime.timezone.utc)
         )
